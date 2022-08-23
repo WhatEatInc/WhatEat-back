@@ -1,7 +1,7 @@
 ---
 name: Template for the issues
 about: This is use for the issues
-title: "[WIP] fb_nameOfTheIssue"
+title: "[WIP] fb-nameOfTheIssue"
 labels: ''
 assignees: ''
 
