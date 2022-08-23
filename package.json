@@ -1,0 +1,23 @@
+{
+  "name": "whateat-back",
+  "version": "1.0.0",
+  "description": "A simple backend to generate a yummy recipe according to your tastes !",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WhatEatInc/WhatEat-back.git"
+  },
+  "author": "What Eat Inc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WhatEatInc/WhatEat-back/issues"
+  },
+  "homepage": "https://github.com/WhatEatInc/WhatEat-back#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
