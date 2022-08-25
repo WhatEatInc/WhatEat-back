@@ -7,5 +7,6 @@ module.exports = {
         + process.env.MONGO_USERNAME 
         + ":" + process.env.MONGO_PASSWORD 
         + "@" + process.env.MONGO_URL 
-        + "/?retryWrites=true&w=majority"
+        + "/" + process.env.MONGO_DB
+        + "?retryWrites=true&w=majority"
 }
