@@ -1,6 +1,6 @@
 require("dotenv").config()
 
 module.exports = {
-    port: process.env.PORT
-    
+    apiKey: process.env.SPOONACULAR_API_KEY
+
 }

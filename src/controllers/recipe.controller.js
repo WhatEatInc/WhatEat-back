@@ -1,10 +1,13 @@
 const { Example } = require("../models/example.model")
 const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
+const spoonacular = require("../config/spoonacular.config")
 
 async function get(req, res) {
     res.json({
-        "title": "pasta carbo"
+        "title": "pasta carbo",
+   
+       
     })
 }
 
@@ -31,6 +34,8 @@ async function post(req, res) {
     
     return
 }
+
+
 
 module.exports = {
     get, post
