@@ -28,6 +28,8 @@ async function post(req, res) {
     .catch(err => {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err)
     })
+    
+    return
 }
 
 module.exports = {
