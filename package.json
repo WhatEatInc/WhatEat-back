@@ -7,8 +7,9 @@
     "node": "14.x"
   },
   "scripts": {
-    "test": "jest --testEnvironment=node --runInBand --force-exit",
+    "test": "jest --testEnvironment=node",
     "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "clean-code": "npx prettier --write ."
   },
   "repository": {
@@ -25,7 +26,14 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "express-validator": "^6.14.2",
+    "http-status": "^1.5.2",
     "jest": "^28.1.3",
-    "prettier": "^2.7.1"
+    "mongodb-memory-server": "^8.9.0",
+    "mongoose": "^6.5.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "supertest": "^6.2.4"
   }
 }
