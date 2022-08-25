@@ -1,11 +1,12 @@
 const express = require("express");
 const app = express();
-
+const morgan = require("morgan")
 const cors = require('cors')
 
 // CORS
 app.use(cors())
 app.options('*', cors())
+app.use(morgan('dev'))
 
 app.get("/", (req, res) => {
   res.json({
