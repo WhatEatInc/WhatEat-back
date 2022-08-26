@@ -38,7 +38,7 @@ async function post(req, res) {
 
 
 
-// This function parses the JSON result of the API
+// This function parses the JSON result of spoonacular
 // returns only useful attributes
 function removeUselessAttr(results) {
 
@@ -49,6 +49,40 @@ function removeUselessAttr(results) {
     }
   
     return results;
+  }
+
+  function getRandomRecipe() {
+    return new Promise((resolve, reject) => {
+        return superagent
+            .get('http://my-json-server.typicode.com/WhatEatInc/fakeSpoonApi/db')
+            .query({ apiKey: APIKEY, number: '1' })
+            .accept('json')
+            .end((err, res) => {
+                if(!err) {
+                    // throw smth
+                    // reject('Bonus error.');
+                    resolve(res);
+                } else {
+                    console.log('error present', err);
+                    reject(err);
+                }
+            });
+    });
+  }
+  
+  
+  async function doSomething() {
+    try {
+        const res = await getRandomRecipe();
+  
+        // throw smth
+        // throw 'Artificial error.';
+  
+        console.log(res.body);
+  
+    } catch (error) {
+        throw new Error(`Problem doing something: ${error}.`);
+    }
   }
 
 module.exports = {
