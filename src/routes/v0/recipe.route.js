@@ -23,6 +23,11 @@ recipeRouter.get(
     recipeController.getParticularity
 )
 
+recipeRouter.get(
+    '/getDuration',
+    recipeController.getDuration
+)
+
 recipeRouter.post(
     '/post',
     body("hello").trim().not().isEmpty({ ignore_whitespace: true}),

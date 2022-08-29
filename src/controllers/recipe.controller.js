@@ -1,5 +1,5 @@
 const { Example } = require("../models/example.model")
-const { Allergens, Particularity, CookType  } = require("../config/spoonacular.config")
+const { Allergens, Particularity, CookType, Duration  } = require("../config/spoonacular.config")
 const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
 
@@ -12,21 +12,28 @@ async function get(req, res) {
 async function getAllergen(req, res){
 
     res.json({
-        "Allergens" : Allergens
+        "Allergen" : allergen
     })
 }
 
 async function getCookType(req, res){
 
     res.json({
-        "CookType" : CookType
+        "CookType" : cookType
     })
 }
 
 async function getParticularity(req, res){
 
     res.json({
-        "Particularity" : Particularity
+        "Particularity" : particularity
+    })
+}
+
+async function getDuration(req, res){
+
+    res.json({
+        "Duration" : duration
     })
 }
 
@@ -55,5 +62,5 @@ async function post(req, res) {
 }
 
 module.exports = {
-    get, post, getAllergen, getCookType, getParticularity
+    get, post, getAllergen, getCookType, getParticularity, getDuration
 }
