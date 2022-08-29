@@ -3,13 +3,25 @@ const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
 const spoonacular = require("../config/spoonacular.config")
 const superagent = require('superagent');
+const { apiKey } = require("../config/spoonacular.config");
 
 async function get(req, res) {
-    res.json({
-        "title": "pasta carbo",
-   
+    try {
+        const apiRes = await getRandomRecipe();
+        let finalRecipe = removeUselessAttr(apiRes.body);
+  
+        // throw smth
+        //throw 'Artificial error.';
+  
+        res.json(finalRecipe)
+  
+    } catch (error) {
+
+        res.json({
+            "error": error,
        
-    })
+        })
+    }
 }
 
 async function post(req, res) {
@@ -42,6 +54,10 @@ async function post(req, res) {
 // returns only useful attributes
 function removeUselessAttr(results) {
 
+    const uselessAttributes = ['creditsText', 'license', 'sourceName', 'sourceUrl',
+                                'originalId', 'veryPopular', 'gaps', 'spoonacularSourceUrl',
+                                'sustainable'];
+
     //delete useless attributes of each recipes retrieved 
     for (recipe of results.recipes) {
       for (attr of uselessAttributes) { delete recipe[attr] }
@@ -55,7 +71,7 @@ function removeUselessAttr(results) {
     return new Promise((resolve, reject) => {
         return superagent
             .get('http://my-json-server.typicode.com/WhatEatInc/fakeSpoonApi/db')
-            .query({ apiKey: APIKEY, number: '1' })
+            .query({ apiKey: apiKey, number: '1' })
             .accept('json')
             .end((err, res) => {
                 if(!err) {
@@ -70,20 +86,6 @@ function removeUselessAttr(results) {
     });
   }
   
-  
-  async function doSomething() {
-    try {
-        const res = await getRandomRecipe();
-  
-        // throw smth
-        // throw 'Artificial error.';
-  
-        console.log(res.body);
-  
-    } catch (error) {
-        throw new Error(`Problem doing something: ${error}.`);
-    }
-  }
 
 module.exports = {
     get, post
