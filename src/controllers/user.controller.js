@@ -1,6 +1,6 @@
 const { Example } = require("../models/example.model")
 const { User } = require("../models/user.model")
-const {Spoonacular} = require("../")
+const {Spoonacular, jwt_token_secret} = require("../config/spoonacular.config")
 const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
 const bcrypt = require('bcryptjs');
@@ -40,7 +40,7 @@ async function register(req, res) {
         // Create token
         const token = jwt.sign(
           { user_id: user._id, email },
-          process.env.TOKEN_KEY,
+          jwt_token_secret,
           {
             expiresIn: "2h",
           }
