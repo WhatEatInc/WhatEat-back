@@ -1,14 +1,14 @@
-allergen = [ "Dairy", "Egg", "Sesame", "Sulfite", "Gluten", 
-              "Grain", "Shellfish", "Tree Nut", "Peanut", "Seafood", 
-              "Soy", "Wheat" ];
+allergen = { "Dairy":"Dairy", "Egg":"Egg", "Sesame":"Sesame", "Sulfite":"Sulfite", "Gluten":"Gluten", 
+              "Grain":"Grain", "Shellfish":"Shellfish", "Tree Nut":"Tree Nut", "Peanut":"Peanut", "Seafood":"Seafood", 
+              "Soy":"Soy", "Wheat":"Wheat" };
 
-particularity = ["Gluten Free", "Ketogenic", "Vegan", 
-                 "Vegetarien", "Pescetarian", "Paleo" ];
+particularity = {"Gluten Free":"Gluten Free", "Ketogenic":"Ketogenic", "Vegan":"Vegan", 
+                 "Vegetarien":"Vegetarien", "Pescetarian":"Pescetarian", "Paleo":"Paleo" };
 
-cookType = ["African", "American", "British", "Irish", "Korean", "Middle Eastern",
-            "Thai", "Cajun", "Caribbean", "Chinese", "Italian", "Latin American", "Nordic",
-            "Vietnamese", "Eastern European", "European", "French", "Japanase", "Mediterranean",
-            "Southern", "German", "Greek", "Indian", "Jewish", "Mexican", "Spanish" ];
+cookType = {"African":"African", "American":"American", "British":"British", "Irish":"Irish", "Korean":"Korean", "Middle Eastern":"Middle Eastern",
+            "Thai": "Thai", "Cajun":"Cajun", "Caribbean":"Caribbean", "Chinese":"Chinese", "Italian":"Italian", "Latin American":"Latin American", "Nordic":"Nordic",
+            "Vietnamese":"Vietnamese", "Eastern European":"Eastern European", "European":"European", "French":"French", "Japanase":"Japanase", "Mediterranean":"Mediterranean",
+            "Southern":"Southern", "German":"German", "Greek":"Greek", "Indian":"Indian", "Jewish":"Jewish", "Mexican":"Mexican", "Spanish":"Spanish" };
 
 duration =  {"0" : "Short",
             "1" : "Medium",
