@@ -1,3 +1,9 @@
+require("dotenv").config()
+
+const uselessAttributes = ['creditsText', 'license', 'sourceName', 'sourceUrl',
+  'originalId', 'veryPopular', 'gaps', 'spoonacularSourceUrl',
+  'sustainable']
+
 allergen = { "Dairy":"Dairy", "Egg":"Egg", "Sesame":"Sesame", "Sulfite":"Sulfite", "Gluten":"Gluten", 
               "Grain":"Grain", "Shellfish":"Shellfish", "Tree Nut":"Tree Nut", "Peanut":"Peanut", "Seafood":"Seafood", 
               "Soy":"Soy", "Wheat":"Wheat" };
@@ -14,8 +20,9 @@ duration =  {"0" : "Short",
             "1" : "Medium",
             "2" : "Long"};
 
-
 module.exports = {
+    apiKey: process.env.SPOONACULAR_API_KEY,
+    uselessAttributes: uselessAttributes,
     allergen: allergen,
     particularity : particularity,
     cookType: cookType,
