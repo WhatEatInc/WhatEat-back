@@ -24,7 +24,7 @@ const duration =  {"0" : "Short",
 module.exports = {
     apiKey: process.env.SPOONACULAR_API_KEY,
     uselessAttributes: uselessAttributes, 
-    jwt_token_secret: process.env.JWT_TOKEN_SECRET
+    jwt_token_secret: process.env.JWT_TOKEN_SECRET,
     allergen: allergen,
     particularity : particularity,
     cookType: cookType,
