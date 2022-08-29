@@ -1,4 +1,5 @@
 const { Example } = require("../models/example.model")
+const { Allergens, Particularity, CookType, Duration  } = require("../config/spoonacular.config")
 const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
 const spoonacular = require("../config/spoonacular.config")
@@ -22,6 +23,34 @@ async function get(req, res) {
 
         })
     }
+}
+
+async function getAllergen(req, res){
+
+    res.json({
+        "Allergen" : allergen
+    })
+}
+
+async function getCookType(req, res){
+
+    res.json({
+        "CookType" : cookType
+    })
+}
+
+async function getParticularity(req, res){
+
+    res.json({
+        "Particularity" : particularity
+    })
+}
+
+async function getDuration(req, res){
+
+    res.json({
+        "Duration" : duration
+    })
 }
 
 async function post(req, res) {
@@ -88,5 +117,5 @@ function removeUselessAttr(results) {
   
 
 module.exports = {
-    get, post
+    get, post, getAllergen, getCookType, getParticularity, getDuration
 }
