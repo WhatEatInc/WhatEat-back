@@ -6,9 +6,13 @@ const userSchema = new mongoose.Schema({
     lastname : { type: String },
     mail: { type: String },
     password: { type: String },
-    preference : { type: Preference },
+    preferences : {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Preference'
+   },
+    token : { type: String }
 })
 
-const Example = mongoose.model('User', userSchema)
+const User = mongoose.model('User', userSchema)
 
 module.exports = { User }
