@@ -19,7 +19,7 @@ async function get(req, res) {
 
         res.json({
             "error": error,
-       
+
         })
     }
 }
