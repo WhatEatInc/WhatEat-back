@@ -28,4 +28,4 @@ module.exports = {
     particularity : particularity,
     cookType: cookType,
     duration : duration
-    }
+}

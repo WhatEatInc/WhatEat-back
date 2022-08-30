@@ -1,5 +1,5 @@
 const { Example } = require("../models/example.model")
-const { Allergens, Particularity, CookType, Duration  } = require("../config/spoonacular.config")
+const { allergen, particularity, cookType, duration  } = require("../config/spoonacular.config")
 const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
 const spoonacular = require("../config/spoonacular.config")
