@@ -98,17 +98,14 @@ async function login(req, res) {
 
 async function getPreferences(req, res){
 
-  res.json({
-    "firstname" : "John",
-    "lastname" : "Doe",
-    "cook" : {
-      "allergen" : {"Dairy":"Dairy", "Egg":"Egg", "Sesame":"Sesame"},
-      "cookType" : {"African":"African", "American":"American", "British":"British"},
-      "particularity" : {"Gluten Free":"Gluten Free", "Ketogenic":"Ketogenic"},
-      "duration" : 0,
-      "health" : true
-    }
-  })
+ console.log(userExample.get('preferences'));
+
+res.json({
+  "firstname" : userExample.get('firstname'),
+  "lastname"  : userExample.get('lastname'),
+  "preferences": userExample.get('preferences'),
+
+})
 }
 
 module.exports = {

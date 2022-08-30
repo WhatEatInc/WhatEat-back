@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const preferenceSchema = new mongoose.Schema({
-    alergens: {
+    allergens: {
         type: Map,
         of: String
     },
@@ -9,7 +9,7 @@ const preferenceSchema = new mongoose.Schema({
         type: Map,
         of: String
     },
-    cookType: {
+    cookTypes: {
         type: Map,
         of: String
     },
