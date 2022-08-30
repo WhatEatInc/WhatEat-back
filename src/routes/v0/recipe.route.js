@@ -28,6 +28,11 @@ recipeRouter.get(
     recipeController.getDuration
 )
 
+recipeRouter.get(
+    '/download',
+    recipeController.download
+)
+
 recipeRouter.post(
     '/post',
     body("hello").trim().not().isEmpty({ ignore_whitespace: true}),

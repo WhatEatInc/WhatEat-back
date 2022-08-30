@@ -6,6 +6,11 @@ const spoonacular = require("../config/spoonacular.config")
 const superagent = require('superagent');
 const { apiKey } = require("../config/spoonacular.config");
 
+const puppeteer = require('puppeteer');
+const path = require('path');
+const ejs = require('ejs');
+const fs = require('fs');
+
 async function get(req, res) {
     try {
         const apiRes = await getRandomRecipe();
@@ -115,7 +120,33 @@ function removeUselessAttr(results) {
     });
   }
   
+ async function download(req, res) {
+
+
+
+  const browser = await puppeteer.launch();
+
+  const page = await browser.newPage();
+
+  const pageContent = await ejs.renderFile(path.join(__dirname, '../templates/download.ejs'), {name: 'justttt'})
+
+  await page.goto(`data:text/html,${pageContent}`, { waitUntil: 'networkidle0' });
+
+  const pdf = await page.pdf({
+    path: 'result2.pdf',
+    margin: { top: '100px', right: '50px', bottom: '100px', left: '50px' },
+    printBackground: true,
+    format: 'A4',
+  });
+
+  // Close the browser instance
+  await browser.close();
+
+  res.set('Content-Type', 'application/pdf')
+  res.set('Content-Disposition', 'attachement; filename=recipe.pdf')
+  res.send(pdf)
+}
 
 module.exports = {
-    get, post, getAllergen, getCookType, getParticularity, getDuration
+    get, post, getAllergen, getCookType, getParticularity, getDuration, download
 }
