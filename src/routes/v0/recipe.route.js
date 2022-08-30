@@ -9,18 +9,18 @@ recipeRouter.get(
 )
 
 recipeRouter.get(
-    '/getAllergen',
-    recipeController.getAllergen
+    '/getAllergens',
+    recipeController.getAllergens
 )
 
 recipeRouter.get(
-    '/getCookType',
-    recipeController.getCookType
+    '/getCookTypes',
+    recipeController.getCookTypes
 )
 
 recipeRouter.get(
-    '/getParticularity',
-    recipeController.getParticularity
+    '/getParticularities',
+    recipeController.getParticularities
 )
 
 recipeRouter.get(
