@@ -98,8 +98,6 @@ async function login(req, res) {
 
 async function getPreferences(req, res){
 
- console.log(userExample.get('preferences'));
-
 res.json({
   "firstname" : userExample.get('firstname'),
   "lastname"  : userExample.get('lastname'),

@@ -95,7 +95,7 @@ function removeUselessAttr(results) {
   function getRandomRecipe() {
     return new Promise((resolve, reject) => {
         return superagent
-            .get('http://my-json-server.typicode.com/WhatEatInc/fakeSpoonApi/db')
+            .get('https://api.spoonacular.com/recipes/random')
             .query({ apiKey: apiKey, number: '1' })
             .accept('json')
             .end((err, res) => {
