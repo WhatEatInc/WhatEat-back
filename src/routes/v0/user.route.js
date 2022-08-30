@@ -9,4 +9,9 @@ userRouter.post(
     userController.register
 )
 
+userRouter.get(
+    '/getPreferences',
+    userController.getPreferences
+)
+
 module.exports = userRouter;

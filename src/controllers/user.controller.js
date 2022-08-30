@@ -55,6 +55,21 @@ async function register(req, res) {
       }
 }
 
+async function getPreferences(req, res){
+
+  res.json({
+    "firstname" : "John",
+    "lastname" : "Doe",
+    "cook" : {
+      "allergen" : {"Dairy":"Dairy", "Egg":"Egg", "Sesame":"Sesame"},
+      "cookType" : {"African":"African", "American":"American", "British":"British"},
+      "particularity" : {"Gluten Free":"Gluten Free", "Ketogenic":"Ketogenic"},
+      "duration" : 0,
+      "health" : true
+    }
+  })
+}
+
 module.exports = {
-    register
+    register, getPreferences
 }
