@@ -18,8 +18,8 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-     - name: 'Create env file'
-        run: |
+    - name: 'Create env file'
+      run: |
           touch .env
           echo SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
           cat .env
