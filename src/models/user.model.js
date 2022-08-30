@@ -4,7 +4,7 @@ const { Preference } = require('./preference.model')
 const userSchema = new mongoose.Schema({
     firstname : { type: String },
     lastname : { type: String },
-    mail: { type: String },
+    email: { type: String },
     password: { type: String },
     preferences : {
         type: [mongoose.Schema.Types.ObjectId],
