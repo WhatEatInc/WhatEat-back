@@ -6,6 +6,7 @@ const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
+const { userExample } = require("../config/user.example.config")
 
 
 async function register(req, res) {

@@ -1,10 +1,10 @@
 const { Example } = require("../models/example.model")
-const { allergen, particularity, cookType, duration  } = require("../config/spoonacular.config")
 const { validationResult } = require("express-validator")
 const httpStatus = require("http-status")
-const spoonacular = require("../config/spoonacular.config")
 const superagent = require('superagent');
-const { apiKey } = require("../config/spoonacular.config");
+const { apiKey, uselessAttributes } = require("../config/spoonacular.config");
+const {allergens, particularities, cookTypes, duration} = require("../config/user-preferences.config");
+
 
 async function get(req, res) {
     try {
@@ -25,31 +25,31 @@ async function get(req, res) {
     }
 }
 
-async function getAllergen(req, res){
+async function getAllergens(req, res){
 
     res.json({
-        "Allergen" : allergen
+        "allergens" : allergens
     })
 }
 
-async function getCookType(req, res){
+async function getCookTypes(req, res){
 
     res.json({
-        "CookType" : cookType
+        "cookTypes" : cookTypes
     })
 }
 
-async function getParticularity(req, res){
+async function getParticularities(req, res){
 
     res.json({
-        "Particularity" : particularity
+        "particularities" : particularities
     })
 }
 
 async function getDuration(req, res){
 
     res.json({
-        "Duration" : duration
+        "duration" : duration
     })
 }
 
@@ -83,10 +83,6 @@ async function post(req, res) {
 // returns only useful attributes
 function removeUselessAttr(results) {
 
-    const uselessAttributes = ['creditsText', 'license', 'sourceName', 'sourceUrl',
-                                'originalId', 'veryPopular', 'gaps', 'spoonacularSourceUrl',
-                                'sustainable'];
-
     //delete useless attributes of each recipes retrieved 
     for (recipe of results.recipes) {
       for (attr of uselessAttributes) { delete recipe[attr] }
@@ -117,5 +113,5 @@ function removeUselessAttr(results) {
   
 
 module.exports = {
-    get, post, getAllergen, getCookType, getParticularity, getDuration
+    get, post, getAllergens, getCookTypes, getParticularities, getDuration
 }
