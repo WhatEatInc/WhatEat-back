@@ -20,7 +20,7 @@ jobs:
       
       - uses: iamsauravsharma/create-dotenv@v1.2.1
         with:
-          env-prefix: 'ENV_KEY_' # Optional (default: '')
+          env-prefix: '' # Optional (default: '')
           file-name: '.env' # Optional (default : '.env')
           directory: '.' # Optional (default: '.')
         env: # env available for only this steps
