@@ -34,7 +34,6 @@ userRouter.post(
 )
 
 
-
 /**
  * @api {post} /user/login Login a user
  * @apiName login
@@ -53,6 +52,12 @@ userRouter.post(
 userRouter.post(
     '/login',
     userController.login
+)
+
+
+userRouter.get(
+    '/getPreferences',
+    userController.getPreferences
 )
 
 module.exports = userRouter;
