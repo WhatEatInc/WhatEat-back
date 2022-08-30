@@ -12,8 +12,6 @@ jobs:
     name: Create env file
     runs-on: ubuntu-latest
     env: # env available for all steps of jobs
-      ENV_KEY_DEBUG: true
-      ENV_KEY_USERNAME: root
       SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
     
     steps:
@@ -23,7 +21,7 @@ jobs:
         with:
           env-prefix: '' # Optional (default: '')
           file-name: '.env' # Optional (default : '.env')
-          directory: '.' # Optional (default: '.')
+          directory: '../' # Optional (default: '.')
         env: # env available for only this steps
           SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
 
