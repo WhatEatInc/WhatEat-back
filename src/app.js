@@ -14,7 +14,7 @@ app.use("/v0/", v0Router)
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Hello World",
+    message: "Hello Didier",
     version: "1.0.0",
   });
 });
