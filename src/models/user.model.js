@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { Preference } = require('./preference.model')
+const { Preference, preferenceSchema } = require('./preference.model')
 
 const userSchema = new mongoose.Schema({
     firstname : { type: String },
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String },
     password: { type: String },
     preferences : {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: preferenceSchema,
         ref: 'Preference'
    }
 })

@@ -20,4 +20,4 @@ const preferenceSchema = new mongoose.Schema({
 
 const Preference = mongoose.model('Preference', preferenceSchema)
 
-module.exports = { Preference }
+module.exports = { Preference, preferenceSchema }
