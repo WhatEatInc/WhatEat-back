@@ -14,6 +14,7 @@ jobs:
     env: # env available for all steps of jobs
       ENV_KEY_DEBUG: true
       ENV_KEY_USERNAME: root
+      SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
     
     steps:
       - uses: actions/checkout@v2
