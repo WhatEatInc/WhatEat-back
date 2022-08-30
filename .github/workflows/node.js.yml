@@ -8,7 +8,8 @@ on:
     branches: [ "develop", "main" ]
 
 jobs:
-  build:
+  create-env-file:
+    name: Create env file
     runs-on: ubuntu-latest
     env: # env available for all steps of jobs
       SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
@@ -20,9 +21,11 @@ jobs:
         with:
           env-prefix: '' # Optional (default: '')
           file-name: '.env' # Optional (default : '.env')
-          directory: '' # Optional (default: '.')
+          directory: '.' # Optional (default: '.')
         env: # env available for only this steps
           SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
+
+  build:
 
     runs-on: ubuntu-latest
 
