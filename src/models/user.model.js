@@ -9,8 +9,7 @@ const userSchema = new mongoose.Schema({
     preferences : {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Preference'
-   },
-    token : { type: String }
+   }
 })
 
 const User = mongoose.model('User', userSchema)

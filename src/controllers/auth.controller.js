@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken");
 const { jwt_token_secret } = require("../config/auth.config")
 
 const verifyToken = (req, res, next) => {
-  const uToken = req.headers["x-access-token"];
+
+  const uToken = req.cookies['token']
 
   if (!uToken) {
     return res.status(403).send("A token is required for authentication");

@@ -49,7 +49,7 @@ async function register(req, res) {
           }
         );
         // save user token
-        user.token = token;
+        // user.token = token;
     
         // return new user
         res.status(201).json(user);
@@ -83,9 +83,10 @@ async function login(req, res) {
       );
 
       // save user token
-      user.token = token;
+      //user.token = token;
 
       // user
+      res.cookie('token', token)
       res.status(200).json(user);
     }
     res.status(400).send("Invalid Credentials");
