@@ -17,14 +17,23 @@ afterAll(async () => {
 
 describe('Test Example', () => {
 
-    it('should get pasta carbo', async () => {
+    //it('should get pasta carbo', async () => {
+    //    const res = await request(app)
+    //        .get('/v0/recipe/get')
+    //        .send()
+    //    expect(res.statusCode).toEqual(httpStatus.OK)
+    //    expect(res.body).toHaveProperty('title')
+    //    expect(res.body.title).toBe('pasta carbo')
+    //})
+
+
+    it('should get always the same recipe', async () => {
         const res = await request(app)
-            .get('/v0/recipe/get')
-            .send()
-        expect(res.statusCode).toEqual(httpStatus.OK)
-        expect(res.body).toHaveProperty('title')
-        expect(res.body.title).toBe('pasta carbo')
-    })
+                .get('/v0/recipe/get')
+                .send()
+            expect(res.statusCode).toEqual(httpStatus.OK)
+            expect(res.body).toHaveProperty('recipes')
+        })
 
     it('should post a recipe', async () => {
         const res = await request(app)
