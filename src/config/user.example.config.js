@@ -22,7 +22,7 @@ const userExample = new User({
     password: "AniceHash",
     preferences : preferenceExample,
     token: "JWT",
-});
+}); 
 
 
 module.exports = {
