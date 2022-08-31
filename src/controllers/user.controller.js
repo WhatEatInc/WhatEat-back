@@ -137,7 +137,7 @@ async function setPreferences(req, res){
 
 function getCurrentUserIdConnected(req ){
 
-  const token = req.cookies['token'];
+  const token = req.headers.authorization.split(' ')[1];
 
   if (!token) {return null}
 
