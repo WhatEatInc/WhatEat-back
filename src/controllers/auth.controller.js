@@ -3,7 +3,7 @@ const { jwt_token_secret } = require("../config/auth.config")
 
 const verifyToken = (req, res, next) => {
 
-  const uToken = req.cookies['token']
+  const uToken = req.headers.authorization.split(' ')[1];
 
   if (!uToken) {
     return res.status(403).send("A token is required for authentication");
