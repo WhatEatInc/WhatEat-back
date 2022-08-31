@@ -65,4 +65,9 @@ userRouter.get(
     userController.getPreferences
 )
 
+userRouter.post(
+    '/setPreferences',
+    userController.setPreferences
+)
+
 module.exports = userRouter;

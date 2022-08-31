@@ -7,6 +7,7 @@ const httpStatus = require("http-status")
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const { userExample } = require("../config/user.example.config")
+const { NOT_EXTENDED } = require("http-status")
 
 
 async function register(req, res) {
@@ -48,8 +49,6 @@ async function register(req, res) {
             expiresIn: "2h",
           }
         );
-        // save user token
-        // user.token = token;
     
         // return new user
         res.status(201).json(user);
@@ -82,9 +81,6 @@ async function login(req, res) {
         }
       );
 
-      // save user token
-      //user.token = token;
-
       // user
       res.cookie('token', token)
       res.status(200).json(user);
@@ -115,6 +111,42 @@ res.json({
 })
 }
 
+async function setPreferences(req, res){
+
+    let newPreferences = req.body.preferences;
+    if(!newPreferences){res.json({"status":"no preferences given"}); return;}
+
+    let idCurrentUser = getCurrentUserIdConnected(req);
+
+    let connectedUser = await User.findById(idCurrentUser);
+
+    if(!connectedUser){res.json({"status":"no user Found"}); return;}
+
+    connectedUser.set({preferences:newPreferences});
+    await connectedUser.save();
+
+    res.json({"Status":"ok !"});
+    res.end()
+
+}
+
+
+function getCurrentUserIdConnected(req ){
+
+  const token = req.cookies['token'];
+
+  if (!token) {return null}
+
+    const decodedToken = jwt.decode(token, {
+      complete: true
+     });
+    
+     if (!decodedToken) {return null}
+    
+     return decodedToken.payload.user_id;
+
+}
+
 module.exports = {
-    register, getPreferences, login, logout
+    register, getPreferences, setPreferences, login, logout
 }
