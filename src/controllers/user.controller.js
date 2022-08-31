@@ -17,7 +17,7 @@ async function register(req, res) {
     
         // Validate user input
         if (!(email && password && firstname && lastname)) {
-          res.status(BAD_REQUEST).send("All input is required ! ");
+          res.status(BAD_REQUEST).send("All input is required ! ").end();
           console.log(req.body)
         }
         
@@ -27,7 +27,7 @@ async function register(req, res) {
         const oldUser = await User.findOne({ email });
     
         if (oldUser) {
-          return res.status(CONFLICT).send("User Already Exist. Please Login");
+          return res.status(CONFLICT).send("User Already Exist. Please Login").end();
         }
     
         //Encrypt user password
@@ -66,7 +66,7 @@ async function login(req, res) {
 
     // Validate user input
     if (!(email && password)) {
-      res.status(BAD_REQUEST).send("All input is required");
+      res.status(BAD_REQUEST).send("All input is required").end();
     }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
@@ -85,7 +85,7 @@ async function login(req, res) {
       res.cookie('token', token)
       res.status(OK).json(user);
     }
-    res.status(BAD_REQUEST).send("Invalid Credentials");
+    res.status(BAD_REQUEST).send("Invalid Credentials").end();
   } catch (err) {
     console.log(err);
   }
@@ -120,14 +120,12 @@ async function getPreferences(req, res){
 
 async function setPreferences(req, res){
 
-    let newPreferences = req.body.preferences;
-    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given! "); return;}
-
     let idCurrentUser = getCurrentUserIdConnected(req);
-
     let connectedUser = await User.findById(idCurrentUser);
-
     if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
+
+    let newPreferences = req.body.preferences;
+    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given! ").end(); return;}
 
     connectedUser.set({preferences:newPreferences});
     await connectedUser.save();
