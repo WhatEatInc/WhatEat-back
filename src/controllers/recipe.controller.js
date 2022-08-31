@@ -5,11 +5,12 @@ const httpStatus = require("http-status")
 const spoonacular = require("../config/spoonacular.config")
 const superagent = require('superagent');
 const { apiKey } = require("../config/spoonacular.config");
-
 const puppeteer = require('puppeteer');
 const path = require('path');
 const ejs = require('ejs');
 const fs = require('fs');
+
+const defaultRecipe = require("../templates/default-recipe")
 
 async function get(req, res) {
     try {
@@ -120,15 +121,28 @@ function removeUselessAttr(results) {
     });
   }
   
- async function download(req, res) {
 
-
-
+//This function generate a pdf with the user's recipe of the day
+async function download(req, res) {
+  
   const browser = await puppeteer.launch();
 
   const page = await browser.newPage();
 
-  const pageContent = await ejs.renderFile(path.join(__dirname, '../templates/download.ejs'), {name: 'justttt'})
+  /*page.addStyleTag({content: "* {background: yellow};"})
+
+  const pageContent = await ejs.renderFile(path.join(__dirname, '../templates/index.ejs'), {name: 'justttt'})*/
+
+  
+  const pageContent = await ejs.renderFile(path.join(__dirname, '../templates/templateTest.ejs'), 
+  {title: defaultRecipe.title,
+    picturePath: defaultRecipe.image,
+    ingredient: defaultRecipe.extendedIngredients, 
+    supplies: defaultRecipe.analyzedInstructions
+  })
+    
+
+  console.log(pageContent)
 
   await page.goto(`data:text/html,${pageContent}`, { waitUntil: 'networkidle0' });
 

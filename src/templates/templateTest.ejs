@@ -1,0 +1,41 @@
+<!doctype html5>
+<html>
+<head>
+<title>Receipe</title>
+<meta name="description" content="Template for the recipe's pdf">
+<meta name="keywords" content="template recipe pdf">
+<style>
+h1 {text-align: center;}
+h2 {text-align: center;}
+p {text-align: center;}
+div {text-align: center;}
+</style>
+</head>
+<body>
+<h1><%=title%></h1>
+
+<br><br>
+
+<p style="text-align:center;"><img src=<%=picturePath%>  height="312" width="231"  alt="just testing" class="center"/></p>
+
+<br><br><br>
+  
+<h2>Ingredients</h2>
+<% ingredient.forEach(function(o) { %>
+    <li><%= o.amount %> <%= o.unit %> - <%= o.originalName %></li>
+<% }); %>
+
+<h2>Receipe</h2>
+<% for(let i = 0; i < supplies.length; i++) {%>
+    <%=supplies[i].name%>
+    <% supplies[i].steps.forEach(function(o) { %>
+        Etape <%= o.number %> : <p><%- o.step %></p>
+    <% }); %>
+<% } %>
+
+
+
+
+
+</body>
+</html>
