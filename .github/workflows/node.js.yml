@@ -23,6 +23,7 @@ jobs:
         touch .env
         echo API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
         cat .env
+        ls -lisa
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
