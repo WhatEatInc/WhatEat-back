@@ -24,6 +24,11 @@ jobs:
         ENV_SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
     - name: Cat file
       run: cat .env
+    - name: 'Create env file'
+      run: |
+        touch .env2
+        echo API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env2
+        cat .env2
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
