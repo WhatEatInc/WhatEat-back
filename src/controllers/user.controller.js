@@ -103,13 +103,19 @@ async function logout(req, res) {
 
 async function getPreferences(req, res){
 
+    let idCurrentUser = getCurrentUserIdConnected(req);
 
-res.json({
-  "firstname" : userExample.get('firstname'),
-  "lastname"  : userExample.get('lastname'),
-  "preferences": userExample.get('preferences'),
+    let connectedUser = await User.findById(idCurrentUser);
 
-})
+    if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
+
+   res.json({
+      "firstname" : connectedUser.get('firstname'),
+      "lastname"  : connectedUser.get('lastname'),
+      "preferences": connectedUser.get('preferences'),
+
+    }).status(OK).end();
+
 }
 
 async function setPreferences(req, res){
