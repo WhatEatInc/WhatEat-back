@@ -8,22 +8,6 @@ on:
     branches: [ "develop", "main" ]
 
 jobs:
-  create-env-file:
-    name: Create env file
-    runs-on: ubuntu-latest
-    env: # env available for all steps of jobs
-      SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
-    
-    steps:
-      - uses: actions/checkout@v2
-      
-      - uses: iamsauravsharma/create-dotenv@v1.2.1
-        with:
-          env-prefix: '' # Optional (default: '')
-          file-name: '.env' # Optional (default : '.env')
-          directory: '.' # Optional (default: '.')
-        env: # env available for only this steps
-          SPOONACULAR_API_KEY: ${{ secrets.SPOONACULAR_API_KEY }}
 
   build:
 
@@ -41,6 +25,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: 'Create env file'
+      run: |
+        touch .env
+        echo SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
     - run: npm install
     - run: npm test
     - name: Run Prettier
