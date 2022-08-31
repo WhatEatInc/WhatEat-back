@@ -3,7 +3,7 @@ const { User } = require("../models/user.model")
 const {Spoonacular} = require("../config/spoonacular.config")
 const {jwt_token_secret} = require("../config/auth.config")
 const { validationResult } = require("express-validator")
-const httpStatus = require("http-status")
+const {BAD_REQUEST, CONFLICT, CREATED, OK, INTERNAL_SERVER_ERROR } = require("http-status")
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const { userExample } = require("../config/user.example.config")
@@ -17,7 +17,7 @@ async function register(req, res) {
     
         // Validate user input
         if (!(email && password && firstname && lastname)) {
-          res.status(400).send("All input is required ! ");
+          res.status(BAD_REQUEST).send("All input is required ! ");
           console.log(req.body)
         }
         
@@ -27,7 +27,7 @@ async function register(req, res) {
         const oldUser = await User.findOne({ email });
     
         if (oldUser) {
-          return res.status(409).send("User Already Exist. Please Login");
+          return res.status(CONFLICT).send("User Already Exist. Please Login");
         }
     
         //Encrypt user password
@@ -51,7 +51,7 @@ async function register(req, res) {
         );
     
         // return new user
-        res.status(201).json(user);
+        res.status(CREATED).json(user);
       } catch (err) {
         console.log(err);
       }
@@ -66,7 +66,7 @@ async function login(req, res) {
 
     // Validate user input
     if (!(email && password)) {
-      res.status(400).send("All input is required");
+      res.status(BAD_REQUEST).send("All input is required");
     }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
@@ -83,9 +83,9 @@ async function login(req, res) {
 
       // user
       res.cookie('token', token)
-      res.status(200).json(user);
+      res.status(OK).json(user);
     }
-    res.status(400).send("Invalid Credentials");
+    res.status(BAD_REQUEST).send("Invalid Credentials");
   } catch (err) {
     console.log(err);
   }
@@ -114,19 +114,18 @@ res.json({
 async function setPreferences(req, res){
 
     let newPreferences = req.body.preferences;
-    if(!newPreferences){res.json({"status":"no preferences given"}); return;}
+    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given !").end(); return;}
 
     let idCurrentUser = getCurrentUserIdConnected(req);
 
     let connectedUser = await User.findById(idCurrentUser);
 
-    if(!connectedUser){res.json({"status":"no user Found"}); return;}
+    if(!connectedUser){res.status(INTERNAL_SERVER_ERROR).send("No user Found !").end(); return;}
 
     connectedUser.set({preferences:newPreferences});
     await connectedUser.save();
 
-    res.json({"Status":"ok !"});
-    res.end()
+    res.status(CREATED).send("Preferences updated !").end();
 
 }
 
