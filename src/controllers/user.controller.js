@@ -3,7 +3,7 @@ const { User } = require("../models/user.model")
 const {Spoonacular} = require("../config/spoonacular.config")
 const {jwt_token_secret} = require("../config/auth.config")
 const { validationResult } = require("express-validator")
-const {BAD_REQUEST, CONFLICT, CREATED, OK, INTERNAL_SERVER_ERROR } = require("http-status")
+const {CREATED, OK, BAD_REQUEST, NOT_FOUND, CONFLICT} = require("http-status")
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const { userExample } = require("../config/user.example.config")
@@ -103,6 +103,7 @@ async function logout(req, res) {
 
 async function getPreferences(req, res){
 
+
 res.json({
   "firstname" : userExample.get('firstname'),
   "lastname"  : userExample.get('lastname'),
@@ -114,18 +115,18 @@ res.json({
 async function setPreferences(req, res){
 
     let newPreferences = req.body.preferences;
-    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given !").end(); return;}
+    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given! "); return;}
 
     let idCurrentUser = getCurrentUserIdConnected(req);
 
     let connectedUser = await User.findById(idCurrentUser);
 
-    if(!connectedUser){res.status(INTERNAL_SERVER_ERROR).send("No user Found !").end(); return;}
+    if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
 
     connectedUser.set({preferences:newPreferences});
     await connectedUser.save();
 
-    res.status(CREATED).send("Preferences updated !").end();
+    res.status(OK).send("Preferences updated !").end();
 
 }
 
