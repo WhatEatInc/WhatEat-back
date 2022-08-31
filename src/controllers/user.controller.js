@@ -95,7 +95,7 @@ async function logout(req, res) {
 
   //delete cookies
   res.clearCookie("token");
-  res.end();
+  res.status(OK).send("User logged out").end();
 
 }
 
