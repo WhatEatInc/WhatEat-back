@@ -95,7 +95,7 @@ async function logout(req, res) {
 
   //delete cookies
   res.clearCookie("token");
-  res.status(OK).send("User logged out").end();
+  res.status(OK).end();
 
 }
 
@@ -130,7 +130,7 @@ async function setPreferences(req, res){
     connectedUser.set({preferences:newPreferences});
     await connectedUser.save();
 
-    res.status(OK).send("Preferences updated !").end();
+    res.status(OK).end();
 
 }
 
