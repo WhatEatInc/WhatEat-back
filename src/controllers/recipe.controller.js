@@ -92,7 +92,7 @@ function removeUselessAttr(results) {
     return results;
   }
 
-  function getRandomRecipe() {
+  function getRandomRecipe() { 
     return new Promise((resolve, reject) => {
         return superagent
             .get('https://api.spoonacular.com/recipes/random')

@@ -95,6 +95,14 @@ async function login(req, res) {
   }
 };
 
+async function logout(req, res) {
+
+  //delete cookies
+  res.clearCookie("token");
+  res.end();
+
+}
+
 
 
 async function getPreferences(req, res){
@@ -108,5 +116,5 @@ res.json({
 }
 
 module.exports = {
-    register, getPreferences, login
+    register, getPreferences, login, logout
 }
