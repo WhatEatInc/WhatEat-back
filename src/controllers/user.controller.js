@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const { userExample } = require("../config/user.example.config")
 const { NOT_EXTENDED } = require("http-status")
+const {verifyToken} = require("./auth.controller")
 
 
 async function register(req, res) {
@@ -159,6 +160,8 @@ async function changePassword(req, res){
 }
 
 function getCurrentUserIdConnected(req ){
+
+  verifyToken;
 
   let token = req.headers.authorization
 
