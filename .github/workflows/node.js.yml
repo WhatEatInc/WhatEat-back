@@ -24,6 +24,9 @@ jobs:
       run: |
         touch .env
         echo SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
+    - name: 'Generate API doc'
+      run: |
+        apidoc -i src -o apidoc  
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
