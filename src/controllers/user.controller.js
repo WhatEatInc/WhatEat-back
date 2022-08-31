@@ -134,6 +134,29 @@ async function setPreferences(req, res){
 
 }
 
+async function changePassword(req, res){
+  try{
+    let idCurrentUser = getCurrentUserIdConnected(req);
+
+    let connectedUser = await User.findById(idCurrentUser);
+
+    if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
+
+    const {currentPWD, newPWD} = req.body;
+
+    if (await bcrypt.compare(currentPWD, connectedUser.password)) {      
+      encryptedPassword = await bcrypt.hash(newPWD, 10);
+
+      connectedUser.password = encryptedPassword;
+
+      connectedUser.save();
+    }
+
+    res.status(OK).json(connectedUser).send();
+  }catch (err) {
+    console.log(err);
+  }
+}
 
 function getCurrentUserIdConnected(req ){
 
@@ -153,5 +176,5 @@ function getCurrentUserIdConnected(req ){
 }
 
 module.exports = {
-    register, getPreferences, setPreferences, login, logout
+    register, getPreferences, setPreferences, login, logout, changePassword
 }

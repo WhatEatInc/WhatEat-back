@@ -165,4 +165,9 @@ userRouter.post(
     userController.setPreferences
 )
 
+userRouter.post(
+    '/changePassword',
+    userController.changePassword
+)
+
 module.exports = userRouter;
