@@ -1,5 +1,5 @@
 require("dotenv").config();
 
 module.exports = {
-  port: process.env.PORT,
+  jwt_token_secret: process.env.JWT_TOKEN_SECRET,
 };

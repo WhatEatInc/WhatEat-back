@@ -8,6 +8,7 @@ on:
     branches: [ "develop", "main" ]
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
@@ -19,12 +20,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: 'Create env file'
+      run: |
+        touch .env
+        echo SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
+    - name: 'Generate API doc'
+      uses: CaoJiayuan/action-apidoc@v0.5-alpha 
+      with: 
+        input: src 
+        output: apidoc 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: 'Create env file'
+      run: |
+        touch .env
+        echo SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
     - run: npm install
     - run: npm test
     - name: Run Prettier
       run: npx prettier --write .
+      
