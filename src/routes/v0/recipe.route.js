@@ -3,6 +3,22 @@ const recipeRouter = express.Router()
 const recipeController = require("../../controllers/recipe.controller")
 const { body } = require("express-validator")
 
+
+/**
+ * @api {get} /recipe/get Get a random receipe depending on the user settings
+ * @apiName get
+ * @apiGroup Recipe
+ *
+ * @apiSuccess {json} 
+ *          HTTP/1.1 200 OK
+ *      {
+ *          "insert": "recipe"
+ *      }
+ * @apiError {json} Error-Response:
+ *      {
+ *          "error": error,
+ *      }
+ */
 recipeRouter.get(
     '/get',
     recipeController.get

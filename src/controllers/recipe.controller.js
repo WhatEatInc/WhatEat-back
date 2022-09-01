@@ -20,7 +20,6 @@ async function get(req, res) {
 
         res.json({
             "error": error,
-
         })
     }
 }
@@ -40,7 +39,6 @@ async function getCookTypes(req, res){
 }
 
 async function getParticularities(req, res){
-
     res.json({
         "particularities" : particularities
     })
