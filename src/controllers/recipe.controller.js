@@ -1,6 +1,6 @@
 const { Example } = require("../models/example.model")
 const { validationResult } = require("express-validator")
-const {NOT_FOUND, OK} = require("http-status")
+const {NOT_FOUND, OK, CREATED, BAD_REQUEST, INTERNAL_SERVER_ERROR} = require("http-status")
 const superagent = require('superagent');
 const { apiKey, uselessAttributes, complexEndpoint, idEndpoint } = require("../config/spoonacular.config");
 const {getCurrentUserIdConnected} = require("./user.controller");
@@ -168,7 +168,7 @@ async function post(req, res) {
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
-        res.status(httpStatus.BAD_REQUEST).json({errors: errors.array()})
+        res.status(BAD_REQUEST).json({errors: errors.array()})
         return
     }
 
@@ -179,10 +179,10 @@ async function post(req, res) {
 
     example.save()
     .then(example => {
-        res.status(httpStatus.CREATED).json(example)
+        res.status(CREATED).json(example)
     })
     .catch(err => {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err)
+        res.status(INTERNAL_SERVER_ERROR).json(err)
     })
     
     return
