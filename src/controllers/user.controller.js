@@ -7,7 +7,6 @@ const {
   CREATED,
   OK,
   BAD_REQUEST,
-  NOT_FOUND,
   CONFLICT,
 } = require("http-status");
 const bcrypt = require("bcryptjs");
@@ -24,7 +23,10 @@ async function register(req, res) {
 
     // Validate user input
     if (!(email && password && firstname && lastname)) {
-      res.status(BAD_REQUEST).send("All input is required ! ").end();
+      res
+        .status(BAD_REQUEST)
+        .json({error: "All input is required ! "})
+        .end();
       console.log(req.body);
     }
 
@@ -35,7 +37,7 @@ async function register(req, res) {
     if (oldUser) {
       return res
         .status(CONFLICT)
-        .send("User Already Exist. Please Login")
+        .json({error: "User Already Exist. Please Login"})
         .end();
     }
 
@@ -70,7 +72,10 @@ async function login(req, res) {
 
     // Validate user input
     if (!(email && password)) {
-      res.status(BAD_REQUEST).send("All input is required").end();
+      res
+        .status(BAD_REQUEST)
+        .json({ error: "All input is required" }).end();
+        return;
     }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
@@ -86,27 +91,24 @@ async function login(req, res) {
       res.status(OK).json(user).end();
       return;
     }
-    res.status(BAD_REQUEST).send("Invalid Credentials").end();
+    res
+      .status(BAD_REQUEST)
+      .json({ error: "Invalid Credentials" }).end();
+      return;
+
   } catch (err) {
     console.log(err);
   }
 }
 
 async function logout(req, res) {
-  //delete cookies
-  res.clearCookie("token");
+  //Frontend needs to manage logout !
   res.status(OK).end();
 }
 
 async function getPreferences(req, res) {
-  let idCurrentUser = getCurrentUserIdConnected(req);
-
-  let connectedUser = await User.findById(idCurrentUser);
-
-  if (!connectedUser) {
-    res.status(NOT_FOUND).send("User not found ! ").end();
-    return;
-  }
+ 
+  const connectedUser =  await getCurrentUser(req,res);
 
   res
     .json({
@@ -119,16 +121,16 @@ async function getPreferences(req, res) {
 }
 
 async function setPreferences(req, res) {
-  let idCurrentUser = getCurrentUserIdConnected(req);
-  let connectedUser = await User.findById(idCurrentUser);
-  if (!connectedUser) {
-    res.status(NOT_FOUND).send("User not found ! ").end();
-    return;
-  }
+
+  let connectedUser =  await getCurrentUser(req,res);
+ 
 
   let newPreferences = req.body.preferences;
   if (!newPreferences) {
-    res.status(BAD_REQUEST).send("No preferences given! ").end();
+    res
+      .status(BAD_REQUEST)
+      .json({ error: "No preferences given!" })
+      .end();
     return;
   }
 
@@ -140,14 +142,8 @@ async function setPreferences(req, res) {
 
 async function changePassword(req, res) {
   try {
-    let idCurrentUser = getCurrentUserIdConnected(req);
 
-    let connectedUser = await User.findById(idCurrentUser);
-
-    if (!connectedUser) {
-      res.status(NOT_FOUND).send("User not found ! ").end();
-      return;
-    }
+    let connectedUser =  await getCurrentUser(req,res);
 
     const { currentPWD, newPWD } = req.body;
 
@@ -155,11 +151,20 @@ async function changePassword(req, res) {
       encryptedPassword = await bcrypt.hash(newPWD, 10);
 
       connectedUser.password = encryptedPassword;
-
       connectedUser.save();
+
+      res.status(OK).json(connectedUser).end();
+      return
+
     }
 
-    res.status(OK).json(connectedUser).send();
+    res
+      .status(BAD_REQUEST)
+      .json({ error: "Password not changed" })
+      .end()
+      return
+
+    
   } catch (err) {
     console.log(err);
   }
@@ -184,6 +189,38 @@ function getCurrentUserIdConnected(req) {
   }
 
   return decodedToken.payload.user_id;
+}
+
+async function getCurrentUser(req, res) {
+
+  let connectedUser = null;
+
+  try {
+
+  let token = req.headers.authorization;
+
+  token = token.split(" ")[1];
+
+  const decodedToken = jwt.decode(token, {
+    complete: true,
+  });
+
+  const userId = decodedToken.payload.user_id;
+
+  connectedUser = await User.findById(userId);
+
+} catch (err) {
+  res
+    .status(BAD_REQUEST)
+    .json({
+      error: "Can't find which user is connected ! "
+    }).end();
+
+}
+
+return connectedUser;
+  
+
 }
 
 module.exports = {
