@@ -124,6 +124,13 @@ async function getPreferences(req, res) {
 
 async function setPreferences(req, res) {
 
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   let connectedUser =  await getCurrentUser(req,res);
  
 
@@ -143,6 +150,14 @@ async function setPreferences(req, res) {
 }
 
 async function changePassword(req, res) {
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   try {
 
     let connectedUser =  await getCurrentUser(req,res);
@@ -170,27 +185,6 @@ async function changePassword(req, res) {
   } catch (err) {
     console.log(err);
   }
-}
-
-function getCurrentUserIdConnected(req) {
-  verifyToken;
-
-  let token = req.headers.authorization;
-
-  if (!token) {
-    return null;
-  }
-  token = token.split(" ")[1];
-
-  const decodedToken = jwt.decode(token, {
-    complete: true,
-  });
-
-  if (!decodedToken) {
-    return null;
-  }
-
-  return decodedToken.payload.user_id;
 }
 
 async function getCurrentUser(req, res) {
@@ -232,5 +226,5 @@ module.exports = {
   login,
   logout,
   changePassword,
-  getCurrentUserIdConnected,
+  getCurrentUser
 };
