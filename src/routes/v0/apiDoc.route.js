@@ -6,3 +6,5 @@ apiDocRouter.use(
     '/',
     express.static(path.resolve(__dirname + "../../../../apidoc"))
 );
+
+module.exports = apiDocRouter
