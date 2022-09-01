@@ -82,7 +82,7 @@ userRouter.post("/login", userController.login);
  *
  * @apiSuccess {String} user-logged-out   HTTP 200 User logged out
  */
-userRouter.post("/logout", userController.logout);
+userRouter.post("/logout", verifyToken, userController.logout);
 
 /**
  * @api {get} /user/getPreferences Get preferences of the current logged user
@@ -111,7 +111,7 @@ userRouter.post("/logout", userController.logout);
  *    }
  *}
  */
-userRouter.get("/getPreferences", userController.getPreferences);
+userRouter.get("/getPreferences", verifyToken, userController.getPreferences);
 
 /**
  * @api {post} /user/setPreferences Set preferences of the current logged user
@@ -142,8 +142,8 @@ userRouter.get("/getPreferences", userController.getPreferences);
  *
  * @apiSuccess {String} Preferences-updated   HTTP 200 OK Preferences updated !
  */
-userRouter.post("/setPreferences", userController.setPreferences);
+userRouter.post("/setPreferences", verifyToken, userController.setPreferences);
 
-userRouter.post("/changePassword", userController.changePassword);
+userRouter.post("/changePassword", verifyToken, userController.changePassword);
 
 module.exports = userRouter;
