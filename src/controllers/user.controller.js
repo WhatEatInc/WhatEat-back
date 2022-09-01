@@ -85,6 +85,7 @@ async function login(req, res) {
       // user
       user.token = token
       res.status(OK).json(user).end();
+      return
     }
     res.status(BAD_REQUEST).send("Invalid Credentials").end();
   } catch (err) {
