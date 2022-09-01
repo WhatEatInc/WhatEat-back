@@ -27,13 +27,13 @@ describe('Test Example', () => {
     //})
 
 
-    it('should get always the same recipe', async () => {
-        const res = await request(app)
-                .get('/v0/recipe/get')
-                .send()
-            expect(res.statusCode).toEqual(httpStatus.OK)
-            expect(res.body).toHaveProperty('recipes')
-        })
+    //it('should get always the same recipe', async () => {
+    //    const res = await request(app)
+    //            .get('/v0/recipe/get')
+    //            .send()
+    //        expect(res.statusCode).toEqual(httpStatus.OK)
+    //        expect(res.body).toHaveProperty('recipes')
+    //    })
 
     it('should post a recipe', async () => {
         const res = await request(app)

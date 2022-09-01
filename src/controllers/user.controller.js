@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const { userExample } = require("../config/user.example.config")
 const { NOT_EXTENDED } = require("http-status")
 const {verifyToken} = require("./auth.controller")
+const { Preference } = require("../models/preference.model")
 
 
 async function register(req, res) {
@@ -40,6 +41,8 @@ async function register(req, res) {
             lastname: lastname,
             email: email.toLowerCase(),
             password: encryptedPassword,
+            preferences : new Preference()
+            
         });
     
         // Create token
@@ -180,5 +183,5 @@ function getCurrentUserIdConnected(req ){
 }
 
 module.exports = {
-    register, getPreferences, setPreferences, login, logout, changePassword
+    register, getPreferences, setPreferences, login, logout, changePassword, getCurrentUserIdConnected
 }
