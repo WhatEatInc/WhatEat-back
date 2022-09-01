@@ -32,7 +32,12 @@ userRouter.post("/welcome", verifyToken, (req, res) => {
  *     "__v": 0
  * }
  */
-userRouter.post("/register", userController.register);
+userRouter.post("/register",
+                body("firstname").trim().not().isEmpty({ ignore_whitespace: true }),
+                body("lastname").trim().not().isEmpty({ ignore_whitespace: true }),
+                body("email").isEmail(),
+                body("password").isStrongPassword(),
+                userController.register);
 
 /**
  * @api {post} /user/login Login a user
@@ -73,7 +78,10 @@ userRouter.post("/register", userController.register);
  *       }
 
  */
-userRouter.post("/login", userController.login);
+userRouter.post("/login",
+                body("email").trim().not().isEmpty({ ignore_whitespace: true }),
+                body("password").trim().not().isEmpty({ ignore_whitespace: true }),
+                userController.login);
 
 /**
  * @api {post} /user/logout Logout a user
