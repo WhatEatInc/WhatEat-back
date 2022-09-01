@@ -17,18 +17,16 @@ const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
 
 async function register(req, res) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   try {
     // Get user input
     const { firstname, lastname, email, password } = req.body;
-
-    // Validate user input
-    if (!(email && password && firstname && lastname)) {
-      res
-        .status(BAD_REQUEST)
-        .json({error: "All input is required ! "})
-        .end();
-      console.log(req.body);
-    }
 
     // check if user already exist
     // Validate if user exist in our database
@@ -62,21 +60,25 @@ async function register(req, res) {
     res.status(CREATED).json(user);
   } catch (err) {
     console.log(err);
+    res.status(BAD_REQUEST).json({
+      error : err
+    });
   }
 }
 
 async function login(req, res) {
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   try {
     // Get user input
     const { email, password } = req.body;
 
-    // Validate user input
-    if (!(email && password)) {
-      res
-        .status(BAD_REQUEST)
-        .json({ error: "All input is required" }).end();
-        return;
-    }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
 
