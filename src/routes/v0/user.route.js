@@ -1,17 +1,12 @@
-const express = require("express")
-const userRouter = express.Router()
-const userController = require("../../controllers/user.controller")
-const { body } = require("express-validator")
-const verifyToken = require("../../controllers/auth.controller")
+const express = require("express");
+const userRouter = express.Router();
+const userController = require("../../controllers/user.controller");
+const { body } = require("express-validator");
+const verifyToken = require("../../controllers/auth.controller");
 
-
-
-
-
- userRouter.post("/welcome", verifyToken, (req, res) => {
-    res.status(200).send("Welcome 🙌 ");
-  });
-
+userRouter.post("/welcome", verifyToken, (req, res) => {
+  res.status(200).send("Welcome 🙌 ");
+});
 
 /**
  * @api {post} /user/register Register a new user
@@ -25,7 +20,7 @@ const verifyToken = require("../../controllers/auth.controller")
  *  "email" : "john@doe.ch",
  *  "password": "123StrongPass"
  * }
- *  
+ *
  * @apiSuccessExample {json} Success-Response:
  *      HTTP/1.1 201 CREATED
  *  {
@@ -37,11 +32,7 @@ const verifyToken = require("../../controllers/auth.controller")
  *     "__v": 0
  * }
  */
-userRouter.post(
-    '/register',
-    userController.register
-)
-
+userRouter.post("/register", userController.register);
 
 /**
  * @api {post} /user/login Login a user
@@ -82,10 +73,7 @@ userRouter.post(
  *       }
 
  */
-userRouter.post(
-    '/login',
-    userController.login
-)
+userRouter.post("/login", userController.login);
 
 /**
  * @api {post} /user/logout Logout a user
@@ -94,10 +82,7 @@ userRouter.post(
  *
  * @apiSuccess {String} user-logged-out   HTTP 200 User logged out
  */
-userRouter.post(
-    '/logout',
-    userController.logout
-)
+userRouter.post("/logout", userController.logout);
 
 /**
  * @api {get} /user/getPreferences Get preferences of the current logged user
@@ -126,10 +111,7 @@ userRouter.post(
  *    }
  *}
  */
-userRouter.get(
-    '/getPreferences',
-    userController.getPreferences
-)
+userRouter.get("/getPreferences", userController.getPreferences);
 
 /**
  * @api {post} /user/setPreferences Set preferences of the current logged user
@@ -156,18 +138,12 @@ userRouter.get(
  *         "_id": "630f171bb6ee2246b7d6b1a4"
  *     }
  * }
- * 
+ *
  *
  * @apiSuccess {String} Preferences-updated   HTTP 200 OK Preferences updated !
  */
-userRouter.post(
-    '/setPreferences',
-    userController.setPreferences
-)
+userRouter.post("/setPreferences", userController.setPreferences);
 
-userRouter.post(
-    '/changePassword',
-    userController.changePassword
-)
+userRouter.post("/changePassword", userController.changePassword);
 
 module.exports = userRouter;
