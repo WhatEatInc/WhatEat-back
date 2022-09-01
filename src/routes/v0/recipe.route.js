@@ -1,8 +1,7 @@
-const express = require("express")
-const recipeRouter = express.Router()
-const recipeController = require("../../controllers/recipe.controller")
-const { body } = require("express-validator")
-
+const express = require("express");
+const recipeRouter = express.Router();
+const recipeController = require("../../controllers/recipe.controller");
+const { body } = require("express-validator");
 
 /**
  * @api {get} /recipe/get Get a random receipe depending on the user settings
@@ -139,10 +138,7 @@ const { body } = require("express-validator")
  *          "error": error,
  *      }
  */
-recipeRouter.get(
-    '/get',
-    recipeController.get
-)
+ recipeRouter.get("/get", recipeController.get);
 
 /**
  * @api {get} /recipe/getAllergens Get a list of all allergens supported by the API
@@ -159,10 +155,7 @@ recipeRouter.get(
  *                           }
  *          }
  */
-recipeRouter.get(
-    '/getAllergens',
-    recipeController.getAllergens
-)
+recipeRouter.get("/getAllergens", recipeController.getAllergens);
 
 /**
  * @api {get} /recipe/getCookTypes Get a list of all cooking type supported by the API
@@ -179,10 +172,7 @@ recipeRouter.get(
  *                           }
  *          }
  */
-recipeRouter.get(
-    '/getCookTypes',
-    recipeController.getCookTypes
-)
+recipeRouter.get("/getCookTypes", recipeController.getCookTypes);
 
 /**
  * @api {get} /recipe/getParticularities Get a list of all the diets type supported by the API
@@ -199,10 +189,7 @@ recipeRouter.get(
  *                                  }
  *          }
  */
-recipeRouter.get(
-    '/getParticularities',
-    recipeController.getParticularities
-)
+recipeRouter.get("/getParticularities", recipeController.getParticularities);
 
 /**
  * @api {get} /recipe/getDuration Get a list of all the diets type supported by the API
@@ -218,16 +205,14 @@ recipeRouter.get(
  *                          }
  *          }
  */
-recipeRouter.get(
-    '/getDuration',
-    recipeController.getDuration
-)
+recipeRouter.get("/getDuration", recipeController.getDuration);
+
 
 recipeRouter.post(
-    '/post',
-    body("hello").trim().not().isEmpty({ ignore_whitespace: true}),
-    body("world").trim().not().isEmpty({ ignore_whitespace: true}),
-    recipeController.post
-)
+  "/post",
+  body("hello").trim().not().isEmpty({ ignore_whitespace: true }),
+  body("world").trim().not().isEmpty({ ignore_whitespace: true }),
+  recipeController.post
+);
 
-module.exports = recipeRouter
+module.exports = recipeRouter;

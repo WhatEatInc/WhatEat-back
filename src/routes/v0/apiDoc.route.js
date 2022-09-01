@@ -1,6 +1,6 @@
-const express = require("express")
-const apiDocRouter = express.Router()
-var path = require('path');
+const express = require("express");
+const apiDocRouter = express.Router();
+var path = require("path");
 
 
 /**
@@ -9,8 +9,8 @@ var path = require('path');
  * @apiGroup Docs
  */
 apiDocRouter.use(
-    '/',
-    express.static(path.resolve(__dirname + "../../../../apidoc"))
+  "/",
+  express.static(path.resolve(__dirname + "../../../../apidoc"))
 );
 
-module.exports = apiDocRouter
+module.exports = apiDocRouter;
