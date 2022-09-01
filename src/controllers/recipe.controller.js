@@ -115,26 +115,28 @@ async function getRecipe(userPreferences) {
 }
 
 async function get(req, res) {
-  try {
-    const idCurrentUser = getCurrentUserIdConnected(req);
+    try {
 
-    let connectedUser = await User.findById(idCurrentUser);
+        const idCurrentUser = getCurrentUserIdConnected(req);
 
-    if (!connectedUser) {
-      res.status(NOT_FOUND).send("User not found ! ").end();
-      return;
+        let connectedUser = await User.findById(idCurrentUser);
+
+        if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
+
+        userPreferences = connectedUser.preferences;
+
+        const apiRes = await getRecipe(userPreferences)
+   
+        res.status(OK).json(removeUselessAttr(apiRes)).end();
+
+  
+    } catch (error) {
+
+        res.json({
+            "status": error,
+
+        })
     }
-
-    userPreferences = connectedUser.preferences;
-
-    const apiRes = await getRecipe(userPreferences);
-
-    res.status(OK).json(removeUselessAttr(apiRes)).end();
-  } catch (error) {
-    res.json({
-      status: error,
-    });
-  }
 }
 
 async function getAllergens(req, res) {
@@ -149,10 +151,11 @@ async function getCookTypes(req, res) {
   });
 }
 
-async function getParticularities(req, res) {
-  res.json({
-    particularities: particularities,
-  });
+async function getParticularities(req, res){
+
+    res.json({
+        "particularities" : particularities
+    })
 }
 
 async function getDuration(req, res) {

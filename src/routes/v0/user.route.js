@@ -144,6 +144,19 @@ userRouter.get("/getPreferences", verifyToken, userController.getPreferences);
  */
 userRouter.post("/setPreferences", verifyToken, userController.setPreferences);
 
+/**
+ * @api {post} /user/setPreferences Set preferences of the current logged user
+ * @apiName setPreferences
+ * @apiGroup User
+ *
+ * @apiParamExample {json} Request-Example:
+ *                  {"currentPWD" : "123",
+ *                   "newPWD" : "456"
+ *                  }
+ * 
+ * @apiSuccess {String} password-updated   HTTP 200 OK Password updated !
+*          
+ */
 userRouter.post("/changePassword", verifyToken, userController.changePassword);
 
 module.exports = userRouter;
