@@ -83,8 +83,8 @@ async function login(req, res) {
       );
 
       // user
-      res.cookie('token', token)
-      res.status(OK).json(user);
+      user.token = token
+      res.status(OK).json(user).end();
     }
     res.status(BAD_REQUEST).send("Invalid Credentials").end();
   } catch (err) {
