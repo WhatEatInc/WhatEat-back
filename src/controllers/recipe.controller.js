@@ -14,7 +14,7 @@ const {
   complexEndpoint,
   idEndpoint,
 } = require("../config/spoonacular.config");
-const { getCurrentUserIdConnected } = require("./user.controller");
+const { getCurrentUser } = require("./user.controller");
 const {
   allergens,
   particularities,
@@ -37,7 +37,7 @@ async function getRecipe(userPreferences) {
   );
 
   //Basically there's 2 different behaviour based on the "Healthy" preferences
-  if (userPreferences.healthy === false) {
+  if (userPreferences.healthy === true) {
     let tempRes = new Promise((resolve, reject) => {
       return superagent
         .get(complexEndpoint)
@@ -115,13 +115,8 @@ async function getRecipe(userPreferences) {
 }
 
 async function get(req, res) {
+  let connectedUser =  await getCurrentUser(req,res);
     try {
-
-        const idCurrentUser = getCurrentUserIdConnected(req);
-
-        let connectedUser = await User.findById(idCurrentUser);
-
-        if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
 
         userPreferences = connectedUser.preferences;
 
@@ -154,7 +149,7 @@ async function getCookTypes(req, res) {
 async function getParticularities(req, res){
 
     res.json({
-        "particularities" : particularities
+        particularities : particularities
     })
 }
 

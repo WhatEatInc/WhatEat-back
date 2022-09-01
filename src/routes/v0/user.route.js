@@ -150,7 +150,7 @@ userRouter.get("/getPreferences", verifyToken, userController.getPreferences);
  *
  * @apiSuccess {String} Preferences-updated   HTTP 200 OK Preferences updated !
  */
-userRouter.post("/setPreferences", verifyToken, userController.setPreferences);
+userRouter.post("/setPreferences", verifyToken, body('preferences').not().isEmpty() ,userController.setPreferences);
 
 /**
  * @api {post} /user/setPreferences Set preferences of the current logged user
@@ -165,6 +165,6 @@ userRouter.post("/setPreferences", verifyToken, userController.setPreferences);
  * @apiSuccess {String} password-updated   HTTP 200 OK Password updated !
 *          
  */
-userRouter.post("/changePassword", verifyToken, userController.changePassword);
+userRouter.post("/changePassword", verifyToken, body('currentPWD').not().isEmpty(), body('newPWD').isStrongPassword(), userController.changePassword);
 
 module.exports = userRouter;
