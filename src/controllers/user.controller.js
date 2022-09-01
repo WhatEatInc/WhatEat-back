@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const { userExample } = require("../config/user.example.config")
 const { NOT_EXTENDED } = require("http-status")
+const {verifyToken} = require("./auth.controller")
 
 
 async function register(req, res) {
@@ -17,7 +18,7 @@ async function register(req, res) {
     
         // Validate user input
         if (!(email && password && firstname && lastname)) {
-          res.status(BAD_REQUEST).send("All input is required ! ");
+          res.status(BAD_REQUEST).send("All input is required ! ").end();
           console.log(req.body)
         }
         
@@ -27,7 +28,7 @@ async function register(req, res) {
         const oldUser = await User.findOne({ email });
     
         if (oldUser) {
-          return res.status(CONFLICT).send("User Already Exist. Please Login");
+          return res.status(CONFLICT).send("User Already Exist. Please Login").end();
         }
     
         //Encrypt user password
@@ -66,7 +67,7 @@ async function login(req, res) {
 
     // Validate user input
     if (!(email && password)) {
-      res.status(BAD_REQUEST).send("All input is required");
+      res.status(BAD_REQUEST).send("All input is required").end();
     }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
@@ -82,10 +83,11 @@ async function login(req, res) {
       );
 
       // user
-      res.cookie('token', token)
-      res.status(OK).json(user);
+      user.token = token
+      res.status(OK).json(user).end();
+      return
     }
-    res.status(BAD_REQUEST).send("Invalid Credentials");
+    res.status(BAD_REQUEST).send("Invalid Credentials").end();
   } catch (err) {
     console.log(err);
   }
@@ -95,7 +97,7 @@ async function logout(req, res) {
 
   //delete cookies
   res.clearCookie("token");
-  res.end();
+  res.status(OK).end();
 
 }
 
@@ -120,28 +122,52 @@ async function getPreferences(req, res){
 
 async function setPreferences(req, res){
 
-    let newPreferences = req.body.preferences;
-    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given! "); return;}
+    let idCurrentUser = getCurrentUserIdConnected(req);
+    let connectedUser = await User.findById(idCurrentUser);
+    if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
 
+    let newPreferences = req.body.preferences;
+    if(!newPreferences){res.status(BAD_REQUEST).send("No preferences given! ").end(); return;}
+
+    connectedUser.set({preferences:newPreferences});
+    await connectedUser.save();
+
+    res.status(OK).end();
+
+}
+
+async function changePassword(req, res){
+  try{
     let idCurrentUser = getCurrentUserIdConnected(req);
 
     let connectedUser = await User.findById(idCurrentUser);
 
     if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
 
-    connectedUser.set({preferences:newPreferences});
-    await connectedUser.save();
+    const {currentPWD, newPWD} = req.body;
 
-    res.status(OK).send("Preferences updated !").end();
+    if (await bcrypt.compare(currentPWD, connectedUser.password)) {      
+      encryptedPassword = await bcrypt.hash(newPWD, 10);
 
+      connectedUser.password = encryptedPassword;
+
+      connectedUser.save();
+    }
+
+    res.status(OK).json(connectedUser).send();
+  }catch (err) {
+    console.log(err);
+  }
 }
-
 
 function getCurrentUserIdConnected(req ){
 
-  const token = req.cookies['token'];
+  verifyToken;
+
+  let token = req.headers.authorization
 
   if (!token) {return null}
+  token = token.split(' ')[1];
 
     const decodedToken = jwt.decode(token, {
       complete: true
@@ -154,5 +180,5 @@ function getCurrentUserIdConnected(req ){
 }
 
 module.exports = {
-    register, getPreferences, setPreferences, login, logout
+    register, getPreferences, setPreferences, login, logout, changePassword
 }
