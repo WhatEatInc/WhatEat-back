@@ -4,9 +4,12 @@ const recipeController = require("../../controllers/recipe.controller");
 const { body } = require("express-validator");
 
 /**
- * @api {get} /recipe/get Get a random receipe depending on the user settings
+ * @api {get} /recipe/get Get a recipe
  * @apiName get
  * @apiGroup Recipe
+ * 
+ * @apiDescription Get a recipe for the user. If the user already has a valid recipe in the DB, return it. 
+ * If there is no recipe, or the recipe is too old, get a new recipe with the user preferences and stock it.
  *
  * @apiSuccessExample {json} Success-Response:
  *          HTTP/1.1 200 OK
@@ -135,15 +138,17 @@ const { body } = require("express-validator");
  *          }
  * @apiError {json} Error-Response:
  *      {
- *          "error": error,
+ *          error: error,
  *      }
  */
  recipeRouter.get("/get", recipeController.get);
 
 /**
- * @api {get} /recipe/getAllergens Get a list of all allergens supported by the API
+ * @api {get} /recipe/getAllergens Get a list of allergen
  * @apiName getAllergens
  * @apiGroup Recipe
+ * 
+ * @apiDescription Return a list of all the allergens supported
  * 
  * @apiSuccessExample {json} Success-Response:
  *          HTTP/1.1 200 OK
@@ -158,9 +163,11 @@ const { body } = require("express-validator");
 recipeRouter.get("/getAllergens", recipeController.getAllergens);
 
 /**
- * @api {get} /recipe/getCookTypes Get a list of all cooking type supported by the API
+ * @api {get} /recipe/getCookTypes Get a list of cooking style
  * @apiName getCookTypes
  * @apiGroup Recipe
+ * 
+ * @apiDescription Return a list of all the cooking style supported
  * 
  * @apiSuccessExample {json} Success-Response:
  *          HTTP/1.1 200 OK
@@ -175,26 +182,33 @@ recipeRouter.get("/getAllergens", recipeController.getAllergens);
 recipeRouter.get("/getCookTypes", recipeController.getCookTypes);
 
 /**
- * @api {get} /recipe/getParticularities Get a list of all the diets type supported by the API
+ * @api {get} /recipe/getParticularities Get a list of diets
  * @apiName getParticularities
  * @apiGroup Recipe
+ * 
+ * @apiDescription Return a list of all the diets supported
  * 
  * @apiSuccessExample {json} Success-Response:
  *          HTTP/1.1 200 OK
  *          {
- *              "particularities": {"African":"African", 
- *                                  "American":"American", 
- * *                                "British":"British",
- *                                  ...
- *                                  }
+ *              "particularities": {
+ *                                  "Gluten Free": "Gluten Free",
+ *                                  "Ketogenic": "Ketogenic",
+ *                                  "Vegan": "Vegan",
+ *                                  "Vegetarien": "Vegetarien",
+ *                                  "Pescetarian": "Pescetarian",
+ *                                  "Paleo": "Paleo"
+ *                                 }
  *          }
  */
 recipeRouter.get("/getParticularities", recipeController.getParticularities);
 
 /**
- * @api {get} /recipe/getDuration Get a list of all the diets type supported by the API
+ * @api {get} /recipe/getDuration Get a list of the durations supported
  * @apiName getDuration
  * @apiGroup Recipe
+ * 
+ * @apiDescription Return a list of the differents duration supported
  * 
  * @apiSuccessExample {json} Success-Response:
  *          HTTP/1.1 200 OK
