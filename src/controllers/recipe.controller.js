@@ -118,14 +118,14 @@ async function get(req, res) {
   let connectedUser =  await getCurrentUser(req,res);
     try {
 
-        let stockedTime = connectedUser.recipeDate
-        let actualTime = new Date
+        let stockedTime = new Date(connectedUser.recipeDate)
+        let actualTimeDate = new Date(Date.now())
         let recipeResult;
 
         if(connectedUser.recipe === "" ||
-          (stockedTime.getDate <= actualTime.getDate &&
-           stockedTime.getMonth <= actualTime.getMonth &&
-           stockedTime.getFullYear <= actualTime.getFullYear)){
+          (stockedTime.getDate < actualTimeDate.getDate &&
+           stockedTime.getMonth < actualTimeDate.getMonth &&
+           stockedTime.getFullYear < actualTimeDate.getFullYear)){
 
             recipeResult = await getNewRandomRecipe(connectedUser)
 
