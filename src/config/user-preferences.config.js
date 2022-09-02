@@ -55,9 +55,12 @@ const cookTypes = {
 
 const duration = { 0: "Short", 1: "Medium", 2: "Long" };
 
+const durationMapToTime = {"Short": 20, "Medium": 50, "Long":10000}
+
 module.exports = {
   allergens: allergens,
   particularities: particularities,
   cookTypes: cookTypes,
   duration: duration,
+  durationMapToTime: durationMapToTime
 };

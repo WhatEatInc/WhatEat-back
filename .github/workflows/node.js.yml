@@ -38,6 +38,7 @@ jobs:
       run: |
         touch .env
         echo SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }} >> .env
+        echo JWT_TOKEN_SECRET=${{ secrets.JWT_TOKEN_SECRET }} >> .env
     - run: npm install
     - run: npm test
     - name: Run Prettier

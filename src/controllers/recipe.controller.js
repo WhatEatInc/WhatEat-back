@@ -20,8 +20,10 @@ const {
   particularities,
   cookTypes,
   duration,
+  durationMapToTime
 } = require("../config/user-preferences.config");
 const { User } = require("../models/user.model");
+const { Recipe } = require("../models/recipe.model");
 
 async function getRecipe(userPreferences) {
   // Here we construct the api req to Spoonacular
@@ -36,6 +38,8 @@ async function getRecipe(userPreferences) {
     Array.from(userPreferences.particularities.values()).join(", ")
   );
 
+  let maxTime = durationMapToTime[duration[userPreferences.duration]];
+
   //Basically there's 2 different behaviour based on the "Healthy" preferences
   if (userPreferences.healthy === true) {
     let tempRes = new Promise((resolve, reject) => {
@@ -49,6 +53,9 @@ async function getRecipe(userPreferences) {
           cuisine: cuisineString,
           diet: dietString,
           number: "100",
+          fillIngredients: "true",
+          addRecipeInformation: "true",
+          maxReadyTime: maxTime,
         })
         .accept("json")
         .end((err, res) => {
@@ -70,7 +77,7 @@ async function getRecipe(userPreferences) {
     return new Promise((resolve, reject) => {
       return superagent
         .get("https://api.spoonacular.com/recipes/" + recipeId + "/information")
-        .query({ apiKey: apiKey, includeNutrition: "false" })
+        .query({ apiKey: apiKey, includeNutrition: "true", addRecipeInformation: "true" })
         .accept("json")
         .end((err, res) => {
           if (!err) {
@@ -98,6 +105,9 @@ async function getRecipe(userPreferences) {
         cuisine: cuisineString,
         diet: dietString,
         number: "1",
+        fillIngredients: "true",
+        addRecipeInformation: "true",
+        maxReadyTime: maxTime,
       })
       .accept("json")
       .end((err, res) => {
@@ -116,23 +126,57 @@ async function getRecipe(userPreferences) {
 
 async function get(req, res) {
   let connectedUser =  await getCurrentUser(req,res);
+
     try {
 
-        userPreferences = connectedUser.preferences;
+        let stockedTime = new Date(connectedUser.recipeDate)
+        let actualTimeDate = new Date(Date.now())
+        let recipeResult;
 
-        const apiRes = await getRecipe(userPreferences)
-   
-        res.status(OK).json(removeUselessAttr(apiRes)).end();
+        if(connectedUser.recipe === "" ||
+          (stockedTime.getDate < actualTimeDate.getDate &&
+           stockedTime.getMonth < actualTimeDate.getMonth &&
+           stockedTime.getFullYear < actualTimeDate.getFullYear)){
 
+            recipeResult = await getNewRandomRecipe(connectedUser)
+
+        }else{
+          recipeResult = JSON.parse(connectedUser.recipe)
+        }
+
+        res.status(OK).json(filterRecipe
+         (recipeResult)).end();
   
     } catch (error) {
 
+      console.log("Error")
         res.json({
-            "status": error,
+            status: error,
 
         })
     }
 }
+
+
+async function reroll(req, res){
+  let connectedUser =  await getCurrentUser(req,res);
+  try{
+
+    const apiRes = await getNewRandomRecipe(connectedUser)
+
+    res.status(OK).json(filterRecipe
+     (apiRes)).end();
+
+  }catch{
+
+    console.log("Error")
+        res.json({
+            status: error,
+        })
+  }
+}
+
+
 
 async function getAllergens(req, res) {
   res.json({
@@ -159,51 +203,47 @@ async function getDuration(req, res) {
   });
 }
 
-async function post(req, res) {
-  const errors = validationResult(req);
+// This function get a new recipe from spoonacular,
+// Save it in the DB, save the current date in the DB
+// ans send back a JSON of the recipe
+async function getNewRandomRecipe(connectedUser){
+  userPreferences = connectedUser.preferences;
 
-  if (!errors.isEmpty()) {
-    res.status(BAD_REQUEST).json({ errors: errors.array() });
-    return;
-  }
+  const apiRes = await getRecipe(userPreferences)
 
-  const example = new Example({
-    hello: req.body.hello,
-    world: req.body.world,
-  });
+  connectedUser.recipe = JSON.stringify(apiRes)
+  connectedUser.recipeDate = Date.now()
 
-  example
-    .save()
-    .then((example) => {
-      res.status(CREATED).json(example);
-    })
-    .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).json(err);
-    });
+  connectedUser.save()
 
-  return;
+  return apiRes
 }
 
 // This function parses the JSON result of spoonacular
 // returns only useful attributes
-function removeUselessAttr(recipe) {
-    
-  for (attr of uselessAttributes) {
-    delete recipe[attr];
-  }
+function filterRecipe(jsonFromSpoon) {
+  const recipe = new Recipe({
+    title:        jsonFromSpoon.title,
+    summary:      jsonFromSpoon.summary,
+    image:        jsonFromSpoon.image,
+    steps:        jsonFromSpoon.analyzedInstructions,
+    servings:     jsonFromSpoon.servings,
+    ingredients:  jsonFromSpoon.extendedIngredients
+  });
 
   return recipe;
 }
 
 module.exports = {
   get,
-  post,
   getAllergens,
   getCookTypes,
   getParticularities,
   getDuration,
+  reroll
 };
 
 function getRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+
