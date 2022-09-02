@@ -61,7 +61,7 @@ async function register(req, res) {
     });
 
     // return new user
-     res.status(CREATED).json(user).end();
+     res.status(CREATED).end();
   } catch (err) {
      res.status(BAD_REQUEST).json({
       error : err
@@ -95,7 +95,10 @@ async function login(req, res) {
 
       // user
       user.token = token;
-      res.status(OK).json(user).end();
+      res.status(OK).json({
+        token: user.token
+      })
+      .end();
       return;
     }
     res
@@ -175,7 +178,7 @@ async function changePassword(req, res) {
       connectedUser.password = encryptedPassword;
       connectedUser.save();
 
-      res.status(OK).json(connectedUser).end();
+      res.status(OK).json({token : connectedUser.token}).end();
       return
 
     }
