@@ -52,7 +52,7 @@ const badRegisterResponse = {
 
 
 async function insertUserInDB(user){
-    const res = await request(app)
+    return res = await request(app)
     .post('/v0/user/register')
     .send(user)
 }
