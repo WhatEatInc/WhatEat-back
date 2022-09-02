@@ -49,6 +49,8 @@ async function register(req, res) {
       email: email.toLowerCase(),
       password: encryptedPassword,
       preferences: new Preference(),
+      recipeDate: 0,
+      recipe: "",
     });
 
     // Create token

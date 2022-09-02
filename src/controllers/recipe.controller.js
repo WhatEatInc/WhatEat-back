@@ -118,21 +118,52 @@ async function get(req, res) {
   let connectedUser =  await getCurrentUser(req,res);
     try {
 
-        userPreferences = connectedUser.preferences;
+        let stockedTime = connectedUser.recipeDate
+        let actualTime = new Date
+        let recipeResult;
 
-        const apiRes = await getRecipe(userPreferences)
-   
-        res.status(OK).json(removeUselessAttr(apiRes)).end();
+        if(connectedUser.recipe === "" ||
+          (stockedTime.getDate <= actualTime.getDate &&
+           stockedTime.getMonth <= actualTime.getMonth &&
+           stockedTime.getFullYear <= actualTime.getFullYear)){
 
+            recipeResult = await getNewRandomRecipe(connectedUser)
+
+        }else{
+          recipeResult = JSON.parse(connectedUser.recipe)
+        }
+
+        res.status(OK).json(removeUselessAttr(recipeResult)).end();
   
     } catch (error) {
 
+      console.log("Error")
         res.json({
-            "status": error,
+            status: error,
 
         })
     }
 }
+
+
+async function reroll(req, res){
+  let connectedUser =  await getCurrentUser(req,res);
+  try{
+
+    const apiRes = await getNewRandomRecipe(connectedUser)
+
+    res.status(OK).json(removeUselessAttr(apiRes)).end();
+
+  }catch{
+
+    console.log("Error")
+        res.json({
+            status: error,
+        })
+  }
+}
+
+
 
 async function getAllergens(req, res) {
   res.json({
@@ -184,6 +215,22 @@ async function post(req, res) {
   return;
 }
 
+// This function get a new recipe from spoonacular,
+// Save it in the DB, save the current date in the DB
+// ans send back a JSON of the recipe
+async function getNewRandomRecipe(connectedUser){
+  userPreferences = connectedUser.preferences;
+
+  const apiRes = await getRecipe(userPreferences)
+
+  connectedUser.recipe = JSON.stringify(apiRes)
+  connectedUser.recipeDate = Date.now()
+
+  connectedUser.save()
+
+  return apiRes
+}
+
 // This function parses the JSON result of spoonacular
 // returns only useful attributes
 function removeUselessAttr(recipe) {
@@ -202,8 +249,10 @@ module.exports = {
   getCookTypes,
   getParticularities,
   getDuration,
+  reroll
 };
 
 function getRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+

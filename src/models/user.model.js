@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
     type: preferenceSchema,
     ref: "Preference",
   },
+  recipeDate: {type: Number, default: 0},
+  recipe: {type: String, default: ""},
   token: { type: String },
 });
 

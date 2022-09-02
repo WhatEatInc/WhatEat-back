@@ -140,6 +140,8 @@ const { body } = require("express-validator");
  */
  recipeRouter.get("/get", recipeController.get);
 
+ recipeRouter.get("/reroll", recipeController.reroll);
+
 /**
  * @api {get} /recipe/getAllergens Get a list of all allergens supported by the API
  * @apiName getAllergens
