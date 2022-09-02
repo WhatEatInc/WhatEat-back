@@ -7,7 +7,7 @@
     "node": "17.x"
   },
   "scripts": {
-    "test": "jest --testEnvironment=node --force-exit --testTimeout=60000",
+    "test": "jest --testEnvironment=node --force-exit --testTimeout=6000000",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "clean-code": "npx prettier --write ."
