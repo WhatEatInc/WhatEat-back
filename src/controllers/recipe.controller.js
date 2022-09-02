@@ -139,12 +139,6 @@ async function get(req, res) {
         }
 
         res.status(OK).json(removeUselessAttr(recipeResult)).end();
-        /*userPreferences = connectedUser.preferences;
-
-        const apiRes = await getRecipe(userPreferences)
-   
-        res.status(OK).json(removeUselessAttr(apiRes)).end();*/
-
   
     } catch (error) {
 
@@ -154,6 +148,28 @@ async function get(req, res) {
 
         })
     }
+}
+
+
+async function reroll(req, res){
+  try{
+    const idCurrentUser = getCurrentUserIdConnected(req);
+
+    let connectedUser = await User.findById(idCurrentUser);
+
+    if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
+
+    const apiRes = await getNewRandomRecipe(connectedUser)
+
+    res.status(OK).json(removeUselessAttr(apiRes)).end();
+
+  }catch{
+
+    console.log("Error")
+        res.json({
+            status: error,
+        })
+  }
 }
 
 
@@ -242,6 +258,7 @@ module.exports = {
   getCookTypes,
   getParticularities,
   getDuration,
+  reroll
 };
 
 function getRandom(array) {

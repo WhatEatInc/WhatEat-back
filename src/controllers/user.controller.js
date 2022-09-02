@@ -15,7 +15,6 @@ const { userExample } = require("../config/user.example.config");
 const { NOT_EXTENDED } = require("http-status");
 const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
-const { Recipe } = require("../models/recipe.model");
 
 async function register(req, res) {
   const errors = validationResult(req);
