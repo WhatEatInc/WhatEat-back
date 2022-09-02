@@ -123,21 +123,40 @@ async function get(req, res) {
 
         if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
 
-        userPreferences = connectedUser.preferences;
+        let stockedTime = connectedUser.recipeDate
+        let actualTime = new Date
+        let recipeResult;
+
+        if(connectedUser.recipe === "" ||
+          (stockedTime.getDate <= actualTime.getDate &&
+           stockedTime.getMonth <= actualTime.getMonth &&
+           stockedTime.getFullYear <= actualTime.getFullYear)){
+
+            recipeResult = await getNewRandomRecipe(connectedUser)
+
+        }else{
+          recipeResult = JSON.parse(connectedUser.recipe)
+        }
+
+        res.status(OK).json(removeUselessAttr(recipeResult)).end();
+        /*userPreferences = connectedUser.preferences;
 
         const apiRes = await getRecipe(userPreferences)
    
-        res.status(OK).json(removeUselessAttr(apiRes)).end();
+        res.status(OK).json(removeUselessAttr(apiRes)).end();*/
 
   
     } catch (error) {
 
+      console.log("Error")
         res.json({
-            "status": error,
+            status: error,
 
         })
     }
 }
+
+
 
 async function getAllergens(req, res) {
   res.json({
@@ -189,6 +208,22 @@ async function post(req, res) {
   return;
 }
 
+// This function get a new recipe from spoonacular,
+// Save it in the DB, save the current date in the DB
+// ans send back a JSON of the recipe
+async function getNewRandomRecipe(connectedUser){
+  userPreferences = connectedUser.preferences;
+
+  const apiRes = await getRecipe(userPreferences)
+
+  connectedUser.recipe = JSON.stringify(apiRes)
+  connectedUser.recipeDate = Date.now()
+
+  connectedUser.save()
+
+  return apiRes
+}
+
 // This function parses the JSON result of spoonacular
 // returns only useful attributes
 function removeUselessAttr(recipe) {
@@ -212,3 +247,4 @@ module.exports = {
 function getRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+
