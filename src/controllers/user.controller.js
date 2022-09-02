@@ -20,8 +20,9 @@ async function register(req, res) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    res.status(BAD_REQUEST).json({ errors: errors.array() }).end();
     return;
+  
   }
 
   try {
@@ -33,10 +34,11 @@ async function register(req, res) {
     const oldUser = await User.findOne({ email });
 
     if (oldUser) {
-      return res
+       res
         .status(CONFLICT)
         .json({error: "User Already Exist. Please Login"})
         .end();
+        return;
     }
 
     //Encrypt user password
@@ -54,18 +56,19 @@ async function register(req, res) {
     });
 
     // Create token
-    const token = jwt.sign({ user_id: user._id, email }, jwt_token_secret, {
+    const token =  jwt.sign({ user_id: user._id, email }, jwt_token_secret, {
       expiresIn: "2h",
     });
 
     // return new user
-    res.status(CREATED).json(user);
+     res.status(CREATED).json(user).end();
   } catch (err) {
-    console.log(err);
-    res.status(BAD_REQUEST).json({
+     res.status(BAD_REQUEST).json({
       error : err
-    });
+    }).end();
+    return
   }
+  return
 }
 
 async function login(req, res) {
