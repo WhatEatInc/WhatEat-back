@@ -2,5 +2,5 @@
     "name": "WhatEat API Documentation",
     "version": "0.0.1",
     "title": "Api doc WhatEat",
-    "url" : "https://whateat-backend.herokuapp.com/v0/docs"
+    "url" : "https://whateat-backend.herokuapp.com/v0"
 }
