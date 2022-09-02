@@ -7,7 +7,7 @@ const { insertUserInDB, goodJohnDoe } = require("./config/user.config");
 
 beforeAll(async () => {
     await db.connect();
-    //jest.setTimeout(15000)
+ 
   });
   
   afterEach(async () => {
@@ -16,20 +16,20 @@ beforeAll(async () => {
   
   afterAll(async () => {
     await db.closeDatabase();
-    //await new Promise(resolve => setTimeout(() => resolve(), 10000)); // avoid jest open handle error
+
   });
 
   
   describe("User register", () => {
 
-//   it('should not register all fields arent correctly set', async () => {
-//       const res = await request(app)
-//           .post('/v0/user/register')
-//           .send(test.badJohnDoe)
-//
-//       expect(res.statusCode).toEqual(httpStatus.BAD_REQUEST)
-//       expect(res.body).toEqual(test.badRegisterResponse)
-//   })
+    it('should not register all fields arent correctly set', async () => {
+        const res = await request(app)
+            .post('/v0/user/register')
+            .send(test.badJohnDoe)
+
+        expect(res.statusCode).toEqual(httpStatus.BAD_REQUEST)
+        expect(res.body).toEqual(test.badRegisterResponse)
+    })
 
     it('should register a user if all fields are correctly set ', async () => {
         const res = await request(app)
