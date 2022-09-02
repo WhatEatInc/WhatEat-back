@@ -6,6 +6,7 @@ const test = require("./config/user.config");
 const { insertUserInDB, goodJohnDoe } = require("./config/user.config");
 
 beforeAll(async () => {
+    jest.setTimeout(60000);
     await db.connect();
  
   });
