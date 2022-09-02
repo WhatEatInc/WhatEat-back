@@ -93,10 +93,12 @@ userRouter.post("/login",
 userRouter.post("/logout", verifyToken, userController.logout);
 
 /**
- * @api {get} /user/getPreferences Get preferences of the current logged user
+ * @api {get} /user/getPreferences Get user's preferences
  * @apiName getPreferences
  * @apiGroup User
  *
+ * @apiDescription Get preferences of the current logged user
+ * 
  * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 200 OK
  *    {
@@ -122,10 +124,12 @@ userRouter.post("/logout", verifyToken, userController.logout);
 userRouter.get("/getPreferences", verifyToken, userController.getPreferences);
 
 /**
- * @api {post} /user/setPreferences Set preferences of the current logged user
+ * @api {post} /user/setPreferences Set user's preferences 
  * @apiName setPreferences
  * @apiGroup User
  *
+ * @apiDescription Set preferences of the current logged user
+ * 
  * @apiParamExample {json} Request-Example:
  *  {
  *     "preferences": {
@@ -153,9 +157,11 @@ userRouter.get("/getPreferences", verifyToken, userController.getPreferences);
 userRouter.post("/setPreferences", verifyToken, body('preferences').not().isEmpty() ,userController.setPreferences);
 
 /**
- * @api {post} /user/setPreferences Set preferences of the current logged user
+ * @api {post} /user/changePassword Change password
  * @apiName setPreferences
  * @apiGroup User
+ * 
+ * @apiDescription Change the current user's password with a new password.
  *
  * @apiParamExample {json} Request-Example:
  *                  {"currentPWD" : "123",

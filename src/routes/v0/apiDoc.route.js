@@ -4,9 +4,10 @@ var path = require("path");
 
 
 /**
- * @api {get} /docs/ open a static page of the documentation
- * @apiName /
+ * @api {get} /docs/ Open docs
+ * @apiName docs
  * @apiGroup Docs
+ * 
  */
 apiDocRouter.use(
   "/",
