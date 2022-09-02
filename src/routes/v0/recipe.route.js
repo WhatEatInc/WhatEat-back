@@ -224,11 +224,4 @@ recipeRouter.get("/getParticularities", recipeController.getParticularities);
 recipeRouter.get("/getDuration", recipeController.getDuration);
 
 
-recipeRouter.post(
-  "/post",
-  body("hello").trim().not().isEmpty({ ignore_whitespace: true }),
-  body("world").trim().not().isEmpty({ ignore_whitespace: true }),
-  recipeController.post
-);
-
 module.exports = recipeRouter;

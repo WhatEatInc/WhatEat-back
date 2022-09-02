@@ -20,8 +20,10 @@ const {
   particularities,
   cookTypes,
   duration,
+  durationMapToTime
 } = require("../config/user-preferences.config");
 const { User } = require("../models/user.model");
+const { Recipe } = require("../models/recipe.model");
 
 async function getRecipe(userPreferences) {
   // Here we construct the api req to Spoonacular
@@ -36,6 +38,8 @@ async function getRecipe(userPreferences) {
     Array.from(userPreferences.particularities.values()).join(", ")
   );
 
+  let maxTime = durationMapToTime[duration[userPreferences.duration]];
+
   //Basically there's 2 different behaviour based on the "Healthy" preferences
   if (userPreferences.healthy === true) {
     let tempRes = new Promise((resolve, reject) => {
@@ -49,6 +53,9 @@ async function getRecipe(userPreferences) {
           cuisine: cuisineString,
           diet: dietString,
           number: "100",
+          fillIngredients: "true",
+          addRecipeInformation: "true",
+          maxReadyTime: maxTime,
         })
         .accept("json")
         .end((err, res) => {
@@ -70,7 +77,7 @@ async function getRecipe(userPreferences) {
     return new Promise((resolve, reject) => {
       return superagent
         .get("https://api.spoonacular.com/recipes/" + recipeId + "/information")
-        .query({ apiKey: apiKey, includeNutrition: "false" })
+        .query({ apiKey: apiKey, includeNutrition: "true", addRecipeInformation: "true" })
         .accept("json")
         .end((err, res) => {
           if (!err) {
@@ -98,6 +105,9 @@ async function getRecipe(userPreferences) {
         cuisine: cuisineString,
         diet: dietString,
         number: "1",
+        fillIngredients: "true",
+        addRecipeInformation: "true",
+        maxReadyTime: maxTime,
       })
       .accept("json")
       .end((err, res) => {
@@ -116,6 +126,7 @@ async function getRecipe(userPreferences) {
 
 async function get(req, res) {
   let connectedUser =  await getCurrentUser(req,res);
+
     try {
 
         let stockedTime = new Date(connectedUser.recipeDate)
@@ -133,7 +144,8 @@ async function get(req, res) {
           recipeResult = JSON.parse(connectedUser.recipe)
         }
 
-        res.status(OK).json(removeUselessAttr(recipeResult)).end();
+        res.status(OK).json(filterRecipe
+         (recipeResult)).end();
   
     } catch (error) {
 
@@ -152,7 +164,8 @@ async function reroll(req, res){
 
     const apiRes = await getNewRandomRecipe(connectedUser)
 
-    res.status(OK).json(removeUselessAttr(apiRes)).end();
+    res.status(OK).json(filterRecipe
+     (apiRes)).end();
 
   }catch{
 
@@ -190,31 +203,6 @@ async function getDuration(req, res) {
   });
 }
 
-async function post(req, res) {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    res.status(BAD_REQUEST).json({ errors: errors.array() });
-    return;
-  }
-
-  const example = new Example({
-    hello: req.body.hello,
-    world: req.body.world,
-  });
-
-  example
-    .save()
-    .then((example) => {
-      res.status(CREATED).json(example);
-    })
-    .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).json(err);
-    });
-
-  return;
-}
-
 // This function get a new recipe from spoonacular,
 // Save it in the DB, save the current date in the DB
 // ans send back a JSON of the recipe
@@ -233,18 +221,21 @@ async function getNewRandomRecipe(connectedUser){
 
 // This function parses the JSON result of spoonacular
 // returns only useful attributes
-function removeUselessAttr(recipe) {
-    
-  for (attr of uselessAttributes) {
-    delete recipe[attr];
-  }
+function filterRecipe(jsonFromSpoon) {
+  const recipe = new Recipe({
+    title:        jsonFromSpoon.title,
+    summary:      jsonFromSpoon.summary,
+    image:        jsonFromSpoon.image,
+    steps:        jsonFromSpoon.analyzedInstructions,
+    servings:     jsonFromSpoon.servings,
+    ingredients:  jsonFromSpoon.extendedIngredients
+  });
 
   return recipe;
 }
 
 module.exports = {
   get,
-  post,
   getAllergens,
   getCookTypes,
   getParticularities,
