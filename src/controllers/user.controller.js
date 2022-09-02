@@ -17,18 +17,16 @@ const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
 
 async function register(req, res) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   try {
     // Get user input
     const { firstname, lastname, email, password } = req.body;
-
-    // Validate user input
-    if (!(email && password && firstname && lastname)) {
-      res
-        .status(BAD_REQUEST)
-        .json({error: "All input is required ! "})
-        .end();
-      console.log(req.body);
-    }
 
     // check if user already exist
     // Validate if user exist in our database
@@ -51,6 +49,8 @@ async function register(req, res) {
       email: email.toLowerCase(),
       password: encryptedPassword,
       preferences: new Preference(),
+      recipeDate: 0,
+      recipe: "",
     });
 
     // Create token
@@ -62,21 +62,25 @@ async function register(req, res) {
     res.status(CREATED).json(user);
   } catch (err) {
     console.log(err);
+    res.status(BAD_REQUEST).json({
+      error : err
+    });
   }
 }
 
 async function login(req, res) {
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   try {
     // Get user input
     const { email, password } = req.body;
 
-    // Validate user input
-    if (!(email && password)) {
-      res
-        .status(BAD_REQUEST)
-        .json({ error: "All input is required" }).end();
-        return;
-    }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
 
@@ -122,6 +126,13 @@ async function getPreferences(req, res) {
 
 async function setPreferences(req, res) {
 
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   let connectedUser =  await getCurrentUser(req,res);
  
 
@@ -141,6 +152,14 @@ async function setPreferences(req, res) {
 }
 
 async function changePassword(req, res) {
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(BAD_REQUEST).json({ errors: errors.array() });
+    return;
+  }
+
   try {
 
     let connectedUser =  await getCurrentUser(req,res);
@@ -168,27 +187,6 @@ async function changePassword(req, res) {
   } catch (err) {
     console.log(err);
   }
-}
-
-function getCurrentUserIdConnected(req) {
-  verifyToken;
-
-  let token = req.headers.authorization;
-
-  if (!token) {
-    return null;
-  }
-  token = token.split(" ")[1];
-
-  const decodedToken = jwt.decode(token, {
-    complete: true,
-  });
-
-  if (!decodedToken) {
-    return null;
-  }
-
-  return decodedToken.payload.user_id;
 }
 
 async function getCurrentUser(req, res) {
@@ -230,5 +228,5 @@ module.exports = {
   login,
   logout,
   changePassword,
-  getCurrentUserIdConnected,
+  getCurrentUser
 };

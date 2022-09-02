@@ -14,7 +14,7 @@ const {
   complexEndpoint,
   idEndpoint,
 } = require("../config/spoonacular.config");
-const { getCurrentUserIdConnected } = require("./user.controller");
+const { getCurrentUser } = require("./user.controller");
 const {
   allergens,
   particularities,
@@ -37,7 +37,7 @@ async function getRecipe(userPreferences) {
   );
 
   //Basically there's 2 different behaviour based on the "Healthy" preferences
-  if (userPreferences.healthy === false) {
+  if (userPreferences.healthy === true) {
     let tempRes = new Promise((resolve, reject) => {
       return superagent
         .get(complexEndpoint)
@@ -115,29 +115,55 @@ async function getRecipe(userPreferences) {
 }
 
 async function get(req, res) {
+  let connectedUser =  await getCurrentUser(req,res);
     try {
 
-        const idCurrentUser = getCurrentUserIdConnected(req);
+        let stockedTime = connectedUser.recipeDate
+        let actualTime = new Date
+        let recipeResult;
 
-        let connectedUser = await User.findById(idCurrentUser);
+        if(connectedUser.recipe === "" ||
+          (stockedTime.getDate <= actualTime.getDate &&
+           stockedTime.getMonth <= actualTime.getMonth &&
+           stockedTime.getFullYear <= actualTime.getFullYear)){
 
-        if(!connectedUser){res.status(NOT_FOUND).send("User not found ! ").end();return;}
+            recipeResult = await getNewRandomRecipe(connectedUser)
 
-        userPreferences = connectedUser.preferences;
+        }else{
+          recipeResult = JSON.parse(connectedUser.recipe)
+        }
 
-        const apiRes = await getRecipe(userPreferences)
-   
-        res.status(OK).json(removeUselessAttr(apiRes)).end();
-
+        res.status(OK).json(removeUselessAttr(recipeResult)).end();
   
     } catch (error) {
 
+      console.log("Error")
         res.json({
-            "status": error,
+            status: error,
 
         })
     }
 }
+
+
+async function reroll(req, res){
+  let connectedUser =  await getCurrentUser(req,res);
+  try{
+
+    const apiRes = await getNewRandomRecipe(connectedUser)
+
+    res.status(OK).json(removeUselessAttr(apiRes)).end();
+
+  }catch{
+
+    console.log("Error")
+        res.json({
+            status: error,
+        })
+  }
+}
+
+
 
 async function getAllergens(req, res) {
   res.json({
@@ -154,7 +180,7 @@ async function getCookTypes(req, res) {
 async function getParticularities(req, res){
 
     res.json({
-        "particularities" : particularities
+        particularities : particularities
     })
 }
 
@@ -189,6 +215,22 @@ async function post(req, res) {
   return;
 }
 
+// This function get a new recipe from spoonacular,
+// Save it in the DB, save the current date in the DB
+// ans send back a JSON of the recipe
+async function getNewRandomRecipe(connectedUser){
+  userPreferences = connectedUser.preferences;
+
+  const apiRes = await getRecipe(userPreferences)
+
+  connectedUser.recipe = JSON.stringify(apiRes)
+  connectedUser.recipeDate = Date.now()
+
+  connectedUser.save()
+
+  return apiRes
+}
+
 // This function parses the JSON result of spoonacular
 // returns only useful attributes
 function removeUselessAttr(recipe) {
@@ -207,8 +249,10 @@ module.exports = {
   getCookTypes,
   getParticularities,
   getDuration,
+  reroll
 };
 
 function getRandom(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
+
