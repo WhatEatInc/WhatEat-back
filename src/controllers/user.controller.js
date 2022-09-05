@@ -1,4 +1,3 @@
-const { Example } = require("../models/example.model");
 const { User } = require("../models/user.model");
 const { Spoonacular } = require("../config/spoonacular.config");
 const { jwt_token_secret } = require("../config/auth.config");
@@ -11,7 +10,6 @@ const {
 } = require("http-status");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { userExample } = require("../config/user.example.config");
 const { NOT_EXTENDED } = require("http-status");
 const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
