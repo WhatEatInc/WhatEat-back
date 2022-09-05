@@ -117,6 +117,7 @@ async function logout(req, res) {
 
 async function getPreferences(req, res) {
  
+  try{
   const connectedUser =  await getCurrentUser(req,res);
 
   res
@@ -127,6 +128,15 @@ async function getPreferences(req, res) {
     })
     .status(OK)
     .end();
+  } catch (err){
+
+    res
+    .status(BAD_REQUEST)
+    .json({ error: err})
+    .end();
+    return
+
+  }
 }
 
 async function setPreferences(req, res) {
@@ -138,6 +148,7 @@ async function setPreferences(req, res) {
     return;
   }
 
+  try{
   let connectedUser =  await getCurrentUser(req,res);
  
 
@@ -154,6 +165,16 @@ async function setPreferences(req, res) {
   await connectedUser.save();
 
   res.status(OK).end();
+
+} catch (err){
+
+ res
+      .status(BAD_REQUEST)
+      .json({ error: err})
+      .end();
+      return
+
+}
 }
 
 async function changePassword(req, res) {
@@ -213,16 +234,13 @@ async function getCurrentUser(req, res) {
 
   connectedUser = await User.findById(userId);
 
-} catch (err) {
-  res
-    .status(BAD_REQUEST)
-    .json({
-      error: "Can't find which user is connected ! "
-    }).end();
+  return connectedUser;
 
+} catch (err) {
+  throw "Can't find which user is connected ! ";
 }
 
-return connectedUser;
+
   
 
 }

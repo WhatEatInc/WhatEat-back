@@ -135,33 +135,36 @@ async function getRecipe(userPreferences) {
  *  in both case send back recipe to frontend
  */
 async function get(req, res) {
-  let connectedUser = await getCurrentUser(req, res);
+  
 
   try {
+    let connectedUser = await getCurrentUser(req, res);
 
     let stockedTime = new Date(connectedUser.recipeDate)
     let actualTimeDate = new Date(Date.now())
-    let recipeResult;
 
     if (connectedUser.recipe === "" ||
       (stockedTime.getDate < actualTimeDate.getDate &&
         stockedTime.getMonth < actualTimeDate.getMonth &&
         stockedTime.getFullYear < actualTimeDate.getFullYear)) {
 
-      recipeResult = await getNewRandomRecipe(connectedUser)
+      return reroll(req,res);
 
-    } else {
-      recipeResult = JSON.parse(connectedUser.recipe)
     }
+
+    
+    recipeResult = JSON.parse(connectedUser.recipe)
 
     res.status(OK).json(filterRecipe
       (recipeResult)).end();
+     
 
-  } catch (error) {
+  } catch (err) {
+
     res.json({
-      status: error,
-
-    })
+      status: err
+    }).end()
+    
   }
 }
 
@@ -171,9 +174,10 @@ async function get(req, res) {
     send back recipe to frontend */
 async function reroll(req, res) {
 
-  let connectedUser = await getCurrentUser(req, res);
+
 
   try {
+    let connectedUser = await getCurrentUser(req, res);
 
     userPreferences = connectedUser.preferences;
 
