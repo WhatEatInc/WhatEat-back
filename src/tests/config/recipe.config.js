@@ -18,6 +18,31 @@ const JohnDoe = {
 
     }
 
+const prefToSet = {
+    "allergens": {
+        "Dairy": "Dairy",
+        "Egg": "Egg",
+    },
+    "particularities": {
+        "Gluten Free": "Gluten%20Free"
+    },
+    "cookTypes": {
+        "African": "African",
+    },
+    "healthy": false,
+    "duration": 1,
+}
+
+const prefToTest = {
+    "particularities": [
+        "gluten free"
+    ],
+    "cookTypes": [
+        "African"
+    ],
+    "healthy": false
+}
+
 const allAllergens = {
 
     allergens: allergens
@@ -55,6 +80,13 @@ async function changeRecipeDate(currentUser){
     currentUser.save()
 }
 
+async function setUserPref(currentUser){
+
+    console.log(currentUser)
+    currentUser.set({ preferences: prefToSet });
+    await currentUser.save();
+}
+
 module.exports = {
     JohnDoe: JohnDoe,
     allAllergens: allAllergens,
@@ -63,4 +95,6 @@ module.exports = {
     allDuration: allDuration,
     insertUserInDB,
     changeRecipeDate,
+    setUserPref,
+    prefToTest,
 };

@@ -3,8 +3,9 @@ const httpStatus = require("http-status");
 const db = require("../config/jest-mongodb.config");
 const app = require("../app");
 const test = require("./config/recipe.config");
-const { insertUserInDB, changeRecipeDate, goodJohnDoe } = require("./config/recipe.config");
+const { insertUserInDB, changeRecipeDate, goodJohnDoe, setUserPref, testPreferences, prefToTest } = require("./config/recipe.config");
 const user = require("../controllers/user.controller")
+const { User } = require("../models/user.model")
 
 beforeAll(async () => {
     await db.connect();
@@ -20,6 +21,7 @@ beforeAll(async () => {
 
   });
 
+  /*
   describe("Recipe Allergens", () => {
 
     it('should send a list of all allergens', async () => {
@@ -109,12 +111,13 @@ beforeAll(async () => {
         expect(res.statusCode).toEqual(httpStatus.OK)
         expect(res.body).toEqual(test.allDuration)
     })
-  });
+  });*/
 
   describe("Recipe Get", () => {
 
     it('Should replace an empty recipe with a new recipe in the DB and send that recipe back', async () => {
-        await insertUserInDB(test.JohnDoe)
+        let test1 = await insertUserInDB(test.JohnDoe)
+
 
         const res1 = await request(app)
             .post('/v0/user/login')
@@ -171,7 +174,7 @@ beforeAll(async () => {
     })
 
     it('should replace the recipe if the date is too old', async () => {
-        await insertUserInDB(test.JohnDoe)
+        let test1 = await insertUserInDB(test.JohnDoe)
 
         const res1 = await request(app)
             .post('/v0/user/login')
@@ -197,9 +200,16 @@ beforeAll(async () => {
         expect(res.statusCode).toEqual(httpStatus.OK)
         expect(res.body.id).not.toEqual(res2.body.id)
     })
+    
+    it('should send a recipe that match the user preferencies', async () => {
 
-    /*it('should send a recipe that match the user preferencies', async () => {
-        await insertUserInDB(test.JohnDoe)
+        /* let tmp = test.JohnDoe.email
+        const oldUser = await User.findOne({tmp});
+        
+        console.log("testUser")
+        console.log(oldUser)*/
+
+        let test1 = await insertUserInDB(test.JohnDoe)
 
         const res1 = await request(app)
             .post('/v0/user/login')
@@ -208,7 +218,26 @@ beforeAll(async () => {
                 password: test.JohnDoe.password
             })
 
-    }
-*/
+        console.log("res1")
+        console.log(res1)
+
+        let currentUser = await user.currentUserTest(res1)
+
+        console.log(currentUser)
+
+        await setUserPref(currentUser)
+
+        const res2 = await request(app)
+            .get('/v0/recipe/get')
+            .set('Authorization', 'bearer ' + res1.body.token)
+            .send()
+
+
+        expect(res2.statusCode).toEqual(httpStatus.OK)
+        expect(res2.body.diets).toEqual(expect.arrayContaining(prefToTest.particularities));
+        expect(res2.body.cuisines).toEqual(expect.arrayContaining(prefToTest.cookTypes));
+        expect(res2.body.healthy).toEqual(expect.arrayContaining.healthy)
+    })
+
 
   });

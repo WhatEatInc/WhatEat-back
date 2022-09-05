@@ -27,13 +27,13 @@ async function getRecipe(userPreferences) {
   // Here we construct the api req to Spoonacular
 
   let intoleranceString = encodeURIComponent(
-    Array.from(userPreferences.allergens.values()).join(", ")
+    Array.from(userPreferences.allergens.values()).join(",")
   );
   let cuisineString = encodeURIComponent(
-    Array.from(userPreferences.cookTypes.values()).join(", ")
+    Array.from(userPreferences.cookTypes.values()).join(",")
   );
   let dietString = encodeURIComponent(
-    Array.from(userPreferences.particularities.values()).join(", ")
+    Array.from(userPreferences.particularities.values()).join(",")
   );
 
   //Basically there's 2 different behaviour based on the "Healthy" preferences
@@ -43,7 +43,7 @@ async function getRecipe(userPreferences) {
         .get(complexEndpoint)
         .query({
           apiKey: apiKey,
-          type: "main course",
+          type: "main%20course",
           sort: "healthiness",
           intolerance: intoleranceString,
           cuisine: cuisineString,
@@ -92,7 +92,7 @@ async function getRecipe(userPreferences) {
       .query({
         apiKey: apiKey,
         addRecipeInformation: "true",
-        type: "main course",
+        type: "main%20course",
         sort: "random",
         intolerance: intoleranceString,
         cuisine: cuisineString,
@@ -158,7 +158,7 @@ async function reroll(req, res){
 
     console.log("Error")
         res.json({
-            status: error,
+            status: "error",
         })
   }
 }

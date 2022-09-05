@@ -33,6 +33,10 @@ async function register(req, res) {
     // Validate if user exist in our database
     const oldUser = await User.findOne({ email });
 
+    console.log("*************************************************************************")
+    console.log(oldUser)
+    console.log("*************************************************************************")
+
     if (oldUser) {
        res
         .status(CONFLICT)
