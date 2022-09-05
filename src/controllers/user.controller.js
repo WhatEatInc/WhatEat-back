@@ -1,6 +1,4 @@
-const { Example } = require("../models/example.model");
 const { User } = require("../models/user.model");
-const { Spoonacular } = require("../config/spoonacular.config");
 const { jwt_token_secret } = require("../config/auth.config");
 const { validationResult } = require("express-validator");
 const {
@@ -11,9 +9,6 @@ const {
 } = require("http-status");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { userExample } = require("../config/user.example.config");
-const { NOT_EXTENDED } = require("http-status");
-const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
 
 async function register(req, res) {
@@ -101,13 +96,17 @@ async function login(req, res) {
       .end();
       return;
     }
+
     res
       .status(BAD_REQUEST)
       .json({ error: "Invalid Credentials" }).end();
       return;
 
   } catch (err) {
-    console.log(err);
+    res
+      .status(BAD_REQUEST)
+      .json({ error: err}).end();
+      return;
   }
 }
 
@@ -172,7 +171,7 @@ async function changePassword(req, res) {
 
     const { currentPWD, newPWD } = req.body;
 
-    if (await bcrypt.compare(currentPWD, connectedUser.password)) {
+    if (bcrypt.compare(currentPWD, connectedUser.password)) {
       encryptedPassword = await bcrypt.hash(newPWD, 10);
 
       connectedUser.password = encryptedPassword;
@@ -195,6 +194,7 @@ async function changePassword(req, res) {
   }
 }
 
+/** returns the user currently connected (based on JWT presence) */
 async function getCurrentUser(req, res) {
 
   let connectedUser = null;
