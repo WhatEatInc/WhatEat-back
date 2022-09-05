@@ -142,21 +142,22 @@ async function get(req, res) {
 
     let stockedTime = new Date(connectedUser.recipeDate)
     let actualTimeDate = new Date(Date.now())
-    let recipeResult;
 
     if (connectedUser.recipe === "" ||
       (stockedTime.getDate < actualTimeDate.getDate &&
         stockedTime.getMonth < actualTimeDate.getMonth &&
         stockedTime.getFullYear < actualTimeDate.getFullYear)) {
 
-      recipeResult = await getNewRandomRecipe(connectedUser)
+      return reroll(req,res);
 
-    } else {
-      recipeResult = JSON.parse(connectedUser.recipe)
     }
+
+    
+    recipeResult = JSON.parse(connectedUser.recipe)
 
     res.status(OK).json(filterRecipe
       (recipeResult)).end();
+     
 
   } catch (err) {
 
