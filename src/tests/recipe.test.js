@@ -21,7 +21,6 @@ beforeAll(async () => {
 
   });
 
-  /*
   describe("Recipe Allergens", () => {
 
     it('should send a list of all allergens', async () => {
@@ -111,7 +110,7 @@ beforeAll(async () => {
         expect(res.statusCode).toEqual(httpStatus.OK)
         expect(res.body).toEqual(test.allDuration)
     })
-  });*/
+  });
 
   describe("Recipe Get", () => {
 
@@ -174,6 +173,13 @@ beforeAll(async () => {
     })
 
     it('should replace the recipe if the date is too old', async () => {
+
+        let tmp = test.JohnDoe.email
+        const oldUser = await User.findOne({ tmp });
+
+        console.log("olduser")
+        console.log(oldUser)
+
         let test1 = await insertUserInDB(test.JohnDoe)
 
         const res1 = await request(app)
@@ -209,6 +215,8 @@ beforeAll(async () => {
         console.log("testUser")
         console.log(oldUser)*/
 
+        
+
         let test1 = await insertUserInDB(test.JohnDoe)
 
         const res1 = await request(app)
@@ -218,8 +226,8 @@ beforeAll(async () => {
                 password: test.JohnDoe.password
             })
 
-        console.log("res1")
-        console.log(res1)
+        /*console.log("res1")
+        console.log(res1)*/
 
         let currentUser = await user.currentUserTest(res1)
 

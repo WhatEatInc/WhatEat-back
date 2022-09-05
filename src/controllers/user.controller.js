@@ -33,10 +33,6 @@ async function register(req, res) {
     // Validate if user exist in our database
     const oldUser = await User.findOne({ email });
 
-    console.log("*************************************************************************")
-    console.log(oldUser)
-    console.log("*************************************************************************")
-
     if (oldUser) {
        res
         .status(CONFLICT)
@@ -240,6 +236,9 @@ async function currentUserTest(req) {
   const decodedToken = jwt.decode(token, {
     complete: true,
   });
+
+  console.log("id")
+  console.log(req)
 
   const userId = decodedToken.payload.user_id;
 

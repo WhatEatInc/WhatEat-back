@@ -20,7 +20,7 @@ async function clearDatabase() {
   const collections = mongoose.connection.collections;
   for (const key in collections) {
     const collection = collections[key];
-    collection.deleteMany();
+    await collection.deleteMany();
   }
 }
 
