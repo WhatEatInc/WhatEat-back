@@ -1,18 +1,8 @@
-const { Example } = require("../models/example.model");
-const { validationResult } = require("express-validator");
-const {
-  NOT_FOUND,
-  OK,
-  CREATED,
-  BAD_REQUEST,
-  INTERNAL_SERVER_ERROR,
-} = require("http-status");
+const {OK} = require("http-status");
 const superagent = require("superagent");
 const {
   apiKey,
-  uselessAttributes,
   complexEndpoint,
-  idEndpoint,
 } = require("../config/spoonacular.config");
 const { getCurrentUser } = require("./user.controller");
 const {
@@ -22,12 +12,11 @@ const {
   duration,
   durationMapToTime
 } = require("../config/user-preferences.config");
-const { User } = require("../models/user.model");
 const { Recipe } = require("../models/recipe.model");
 
 async function getRecipe(userPreferences) {
-  // Here we construct the api req to Spoonacular
 
+  // Here we construct the api req to Spoonacular
   let intoleranceString = encodeURIComponent(
     Array.from(userPreferences.allergens.values()).join(", ")
   );
@@ -42,12 +31,13 @@ async function getRecipe(userPreferences) {
 
   //Basically there's 2 different behaviour based on the "Healthy" preferences
   if (userPreferences.healthy === true) {
+
     let tempRes = new Promise((resolve, reject) => {
       return superagent
         .get(complexEndpoint)
         .query({
           apiKey: apiKey,
-          type: "main course",
+          type: "main%20course",
           sort: "healthiness",
           intolerance: intoleranceString,
           cuisine: cuisineString,
@@ -64,11 +54,11 @@ async function getRecipe(userPreferences) {
             // reject('Bonus error.');
             resolve(res.body.results);
           } else {
-            console.log("error present", err);
             reject(err);
           }
         });
     });
+
 
     let top100RecipesHealthy = await tempRes;
 
@@ -81,17 +71,18 @@ async function getRecipe(userPreferences) {
         .accept("json")
         .end((err, res) => {
           if (!err) {
-            // throw smth
-            // reject('Bonus error.');
 
             resolve(res.body);
+
           } else {
-            console.log("error present", err);
+
             reject(err);
+            
           }
         });
     });
   }
+
 
   return new Promise((resolve, reject) => {
     return superagent
@@ -99,7 +90,7 @@ async function getRecipe(userPreferences) {
       .query({
         apiKey: apiKey,
         addRecipeInformation: "true",
-        type: "main course",
+        type: "main%20course",
         sort: "random",
         intolerance: intoleranceString,
         cuisine: cuisineString,
@@ -112,9 +103,10 @@ async function getRecipe(userPreferences) {
       .accept("json")
       .end((err, res) => {
         if (!err) {
-          // throw smth
-          // reject('Bonus error.');
-          resolve(res.body.results[0]);
+
+          if(typeof res.body.results[0] === 'undefined') {reject('Retrieve of recipe failed')}
+          else{resolve(res.body.results[0]);}
+          
         } else {
           console.log("error present", err);
           reject(err);
@@ -125,54 +117,54 @@ async function getRecipe(userPreferences) {
 }
 
 async function get(req, res) {
-  let connectedUser =  await getCurrentUser(req,res);
+  let connectedUser = await getCurrentUser(req, res);
 
-    try {
+  try {
 
-        let stockedTime = new Date(connectedUser.recipeDate)
-        let actualTimeDate = new Date(Date.now())
-        let recipeResult;
+    let stockedTime = new Date(connectedUser.recipeDate)
+    let actualTimeDate = new Date(Date.now())
+    let recipeResult;
 
-        if(connectedUser.recipe === "" ||
-          (stockedTime.getDate < actualTimeDate.getDate &&
-           stockedTime.getMonth < actualTimeDate.getMonth &&
-           stockedTime.getFullYear < actualTimeDate.getFullYear)){
+    if (connectedUser.recipe === "" ||
+      (stockedTime.getDate < actualTimeDate.getDate &&
+        stockedTime.getMonth < actualTimeDate.getMonth &&
+        stockedTime.getFullYear < actualTimeDate.getFullYear)) {
 
-            recipeResult = await getNewRandomRecipe(connectedUser)
+      recipeResult = await getNewRandomRecipe(connectedUser)
 
-        }else{
-          recipeResult = JSON.parse(connectedUser.recipe)
-        }
-
-        res.status(OK).json(filterRecipe
-         (recipeResult)).end();
-  
-    } catch (error) {
-
-      console.log("Error")
-        res.json({
-            status: error,
-
-        })
+    } else {
+      recipeResult = JSON.parse(connectedUser.recipe)
     }
+
+    res.status(OK).json(filterRecipe
+      (recipeResult)).end();
+
+  } catch (error) {
+
+    console.log("Error")
+    res.json({
+      status: "error",
+
+    })
+  }
 }
 
 
-async function reroll(req, res){
-  let connectedUser =  await getCurrentUser(req,res);
-  try{
+async function reroll(req, res) {
+  let connectedUser = await getCurrentUser(req, res);
+  try {
 
     const apiRes = await getNewRandomRecipe(connectedUser)
 
     res.status(OK).json(filterRecipe
-     (apiRes)).end();
+      (apiRes)).end();
 
-  }catch{
+  } catch {
 
     console.log("Error")
-        res.json({
-            status: error,
-        })
+    res.json({
+      status: "error",
+    })
   }
 }
 
@@ -190,11 +182,11 @@ async function getCookTypes(req, res) {
   });
 }
 
-async function getParticularities(req, res){
+async function getParticularities(req, res) {
 
-    res.json({
-        particularities : particularities
-    })
+  res.json({
+    particularities: particularities
+  })
 }
 
 async function getDuration(req, res) {
@@ -206,9 +198,10 @@ async function getDuration(req, res) {
 // This function get a new recipe from spoonacular,
 // Save it in the DB, save the current date in the DB
 // ans send back a JSON of the recipe
-async function getNewRandomRecipe(connectedUser){
-  userPreferences = connectedUser.preferences;
+async function getNewRandomRecipe(connectedUser) {
 
+  userPreferences = connectedUser.preferences;
+  
   const apiRes = await getRecipe(userPreferences)
 
   connectedUser.recipe = JSON.stringify(apiRes)
@@ -223,12 +216,12 @@ async function getNewRandomRecipe(connectedUser){
 // returns only useful attributes
 function filterRecipe(jsonFromSpoon) {
   const recipe = new Recipe({
-    title:        jsonFromSpoon.title,
-    summary:      jsonFromSpoon.summary,
-    image:        jsonFromSpoon.image,
-    steps:        jsonFromSpoon.analyzedInstructions,
-    servings:     jsonFromSpoon.servings,
-    ingredients:  jsonFromSpoon.extendedIngredients
+    title: jsonFromSpoon.title,
+    summary: jsonFromSpoon.summary,
+    image: jsonFromSpoon.image,
+    steps: jsonFromSpoon.analyzedInstructions,
+    servings: jsonFromSpoon.servings,
+    ingredients: jsonFromSpoon.extendedIngredients
   });
 
   return recipe;
