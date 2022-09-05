@@ -113,8 +113,6 @@ beforeAll(async () => {
   });
 
   describe("Recipe Get", () => {
-
-    
     it('Should replace an empty recipe with a new recipe in the DB and send that recipe back', async () => {
         let test1 = await insertUserInDB(test.JohnDoe)
 
@@ -204,7 +202,6 @@ beforeAll(async () => {
 
     it('should send a recipe that match the user preferencies', async () => {
 
-
         let test1 = await insertUserInDB(test.JohnDoe)
 
         const res1 = await request(app)
@@ -234,5 +231,64 @@ beforeAll(async () => {
         expect(newRecipe.healthy).toEqual(expect.arrayContaining.healthy)
     })
 
+  });
 
+  describe("Recipe Reroll", () => {
+    it('Should replace an empty recipe with a new recipe in the DB and send that recipe back', async () => {
+        let test1 = await insertUserInDB(test.JohnDoe)
+
+        const res1 = await request(app)
+        .post('/v0/user/login')
+        .send({
+            email:    test.JohnDoe.email,
+            password: test.JohnDoe.password
+        })
+    
+        let currentUser = await user.currentUserTest(res1)
+        let recipe1 = currentUser.recipe
+
+        const res = await request(app)
+            .get('/v0/recipe/reroll')
+            .set('Authorization', 'bearer ' + res1.body.token)
+            .send()
+
+        let currentUser2 = await user.currentUserTest(res1)
+        let recipe2 = currentUser2.recipe
+
+        expect(res.statusCode).toEqual(httpStatus.OK)
+        expect(recipe1).toEqual("")
+        expect(recipe2).not.toEqual("")
+    })
+
+    it('should replace the recipe', async () => {
+
+        let test1 = await insertUserInDB(test.JohnDoe)
+
+        const res1 = await request(app)
+            .post('/v0/user/login')
+            .send({
+                email:    test.JohnDoe.email,
+                password: test.JohnDoe.password
+            })
+
+        const res = await request(app)
+            .get('/v0/recipe/reroll')
+            .set('Authorization', 'bearer ' + res1.body.token)
+            .send()
+
+        
+        let currentUser = await user.currentUserTest(res1)
+        let newRecipe = JSON.parse(currentUser.recipe)
+
+        const res2 = await request(app)
+            .get('/v0/recipe/reroll')
+            .set('Authorization', 'bearer ' + res1.body.token)
+            .send()
+
+        let newCurrentUser = await user.currentUserTest(res1)
+        let newRecipe2 = JSON.parse(newCurrentUser.recipe)
+
+        expect(res.statusCode).toEqual(httpStatus.OK)
+        expect(newRecipe.title).not.toEqual(newRecipe2.title)
+    })
   });
