@@ -114,6 +114,7 @@ beforeAll(async () => {
 
   describe("Recipe Get", () => {
 
+    
     it('Should replace an empty recipe with a new recipe in the DB and send that recipe back', async () => {
         let test1 = await insertUserInDB(test.JohnDoe)
 
@@ -169,16 +170,10 @@ beforeAll(async () => {
         let recipe2 = JSON.parse(currentUser2.recipe)
 
         expect(res.statusCode).toEqual(httpStatus.OK)
-        expect(recipe1.id).toEqual(recipe2.id)
+        expect(recipe1.image).toEqual(recipe2.image)
     })
 
     it('should replace the recipe if the date is too old', async () => {
-
-        let tmp = test.JohnDoe.email
-        const oldUser = await User.findOne({ tmp });
-
-        console.log("olduser")
-        console.log(oldUser)
 
         let test1 = await insertUserInDB(test.JohnDoe)
 
@@ -204,18 +199,11 @@ beforeAll(async () => {
             .send()
 
         expect(res.statusCode).toEqual(httpStatus.OK)
-        expect(res.body.id).not.toEqual(res2.body.id)
+        expect(res.body.image).not.toEqual(res2.body.image)
     })
-    
+
     it('should send a recipe that match the user preferencies', async () => {
 
-        /* let tmp = test.JohnDoe.email
-        const oldUser = await User.findOne({tmp});
-        
-        console.log("testUser")
-        console.log(oldUser)*/
-
-        
 
         let test1 = await insertUserInDB(test.JohnDoe)
 
@@ -226,12 +214,8 @@ beforeAll(async () => {
                 password: test.JohnDoe.password
             })
 
-        /*console.log("res1")
-        console.log(res1)*/
 
         let currentUser = await user.currentUserTest(res1)
-
-        console.log(currentUser)
 
         await setUserPref(currentUser)
 
@@ -240,11 +224,14 @@ beforeAll(async () => {
             .set('Authorization', 'bearer ' + res1.body.token)
             .send()
 
+        
+        let newCurrentUser = await user.currentUserTest(res1)
+        let newRecipe = JSON.parse(newCurrentUser.recipe)
 
         expect(res2.statusCode).toEqual(httpStatus.OK)
-        expect(res2.body.diets).toEqual(expect.arrayContaining(prefToTest.particularities));
-        expect(res2.body.cuisines).toEqual(expect.arrayContaining(prefToTest.cookTypes));
-        expect(res2.body.healthy).toEqual(expect.arrayContaining.healthy)
+        expect(newRecipe.diets).toEqual(expect.arrayContaining(prefToTest.particularities));
+        expect(newRecipe.cuisines).toEqual(expect.arrayContaining(prefToTest.cookTypes));
+        expect(newRecipe.healthy).toEqual(expect.arrayContaining.healthy)
     })
 
 

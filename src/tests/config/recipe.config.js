@@ -81,8 +81,6 @@ async function changeRecipeDate(currentUser){
 }
 
 async function setUserPref(currentUser){
-
-    console.log(currentUser)
     currentUser.set({ preferences: prefToSet });
     await currentUser.save();
 }

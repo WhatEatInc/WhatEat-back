@@ -1,6 +1,4 @@
-const { Example } = require("../models/example.model");
 const { User } = require("../models/user.model");
-const { Spoonacular } = require("../config/spoonacular.config");
 const { jwt_token_secret } = require("../config/auth.config");
 const { validationResult } = require("express-validator");
 const {
@@ -11,9 +9,6 @@ const {
 } = require("http-status");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { userExample } = require("../config/user.example.config");
-const { NOT_EXTENDED } = require("http-status");
-const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
 
 async function register(req, res) {
@@ -61,7 +56,7 @@ async function register(req, res) {
     });
 
     // return new user
-     res.status(CREATED).json(user).end();
+     res.status(CREATED).end();
   } catch (err) {
      res.status(BAD_REQUEST).json({
       error : err
@@ -95,16 +90,23 @@ async function login(req, res) {
 
       // user
       user.token = token;
-      res.status(OK).json(user).end();
+      res.status(OK).json({
+        token: user.token
+      })
+      .end();
       return;
     }
+
     res
       .status(BAD_REQUEST)
       .json({ error: "Invalid Credentials" }).end();
       return;
 
   } catch (err) {
-    console.log(err);
+    res
+      .status(BAD_REQUEST)
+      .json({ error: err}).end();
+      return;
   }
 }
 
@@ -115,6 +117,7 @@ async function logout(req, res) {
 
 async function getPreferences(req, res) {
  
+  try{
   const connectedUser =  await getCurrentUser(req,res);
 
   res
@@ -125,6 +128,15 @@ async function getPreferences(req, res) {
     })
     .status(OK)
     .end();
+  } catch (err){
+
+    res
+    .status(BAD_REQUEST)
+    .json({ error: err})
+    .end();
+    return
+
+  }
 }
 
 async function setPreferences(req, res) {
@@ -136,6 +148,7 @@ async function setPreferences(req, res) {
     return;
   }
 
+  try{
   let connectedUser =  await getCurrentUser(req,res);
  
 
@@ -152,6 +165,16 @@ async function setPreferences(req, res) {
   await connectedUser.save();
 
   res.status(OK).end();
+
+} catch (err){
+
+ res
+      .status(BAD_REQUEST)
+      .json({ error: err})
+      .end();
+      return
+
+}
 }
 
 async function changePassword(req, res) {
@@ -169,13 +192,13 @@ async function changePassword(req, res) {
 
     const { currentPWD, newPWD } = req.body;
 
-    if (await bcrypt.compare(currentPWD, connectedUser.password)) {
+    if (bcrypt.compare(currentPWD, connectedUser.password)) {
       encryptedPassword = await bcrypt.hash(newPWD, 10);
 
       connectedUser.password = encryptedPassword;
       connectedUser.save();
 
-      res.status(OK).json(connectedUser).end();
+      res.status(OK).json({token : connectedUser.token}).end();
       return
 
     }
@@ -192,6 +215,7 @@ async function changePassword(req, res) {
   }
 }
 
+/** returns the user currently connected (based on JWT presence) */
 async function getCurrentUser(req, res) {
 
   let connectedUser = null;
@@ -210,16 +234,13 @@ async function getCurrentUser(req, res) {
 
   connectedUser = await User.findById(userId);
 
-} catch (err) {
-  res
-    .status(BAD_REQUEST)
-    .json({
-      error: "Can't find which user is connected ! "
-    }).end();
+  return connectedUser;
 
+} catch (err) {
+  throw "Can't find which user is connected ! ";
 }
 
-return connectedUser;
+
   
 
 }
@@ -236,9 +257,6 @@ async function currentUserTest(req) {
   const decodedToken = jwt.decode(token, {
     complete: true,
   });
-
-  console.log("id")
-  console.log(req)
 
   const userId = decodedToken.payload.user_id;
 
