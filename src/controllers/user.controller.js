@@ -211,7 +211,11 @@ async function changePassword(req, res) {
 
     
   } catch (err) {
-    console.log(err);
+    res
+    .status(BAD_REQUEST)
+    .json({ error: err})
+    .end();
+    return
   }
 }
 
