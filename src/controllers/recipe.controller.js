@@ -225,10 +225,7 @@ async function getNewRandomRecipe(connectedUser){
 
   connectedUser.recipe = JSON.stringify(apiRes)
   connectedUser.recipeDate = Date.now()
-
-  //console.log("recipeController")
-  //console.log(connectedUser.recipeDate)
-
+  
   connectedUser.save()
 
   return apiRes
