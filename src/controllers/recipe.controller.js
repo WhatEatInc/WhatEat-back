@@ -135,9 +135,10 @@ async function getRecipe(userPreferences) {
  *  in both case send back recipe to frontend
  */
 async function get(req, res) {
-  let connectedUser = await getCurrentUser(req, res);
+  
 
   try {
+    let connectedUser = await getCurrentUser(req, res);
 
     let stockedTime = new Date(connectedUser.recipeDate)
     let actualTimeDate = new Date(Date.now())
@@ -157,11 +158,12 @@ async function get(req, res) {
     res.status(OK).json(filterRecipe
       (recipeResult)).end();
 
-  } catch (error) {
-    res.json({
-      status: error,
+  } catch (err) {
 
-    })
+    res.json({
+      status: err
+    }).end()
+    
   }
 }
 
@@ -171,9 +173,10 @@ async function get(req, res) {
     send back recipe to frontend */
 async function reroll(req, res) {
 
-  let connectedUser = await getCurrentUser(req, res);
+
 
   try {
+    let connectedUser = await getCurrentUser(req, res);
 
     userPreferences = connectedUser.preferences;
 

@@ -8,8 +8,8 @@ const { body } = require("express-validator");
  * @apiName get
  * @apiGroup Recipe
  * 
- * @apiDescription Get a recipe for the user. If the user already has a valid recipe in the DB, return it. 
- * If there is no recipe, or the recipe is too old, get a new recipe with the user preferences and stock it.
+ * @apiDescription Get a recipe for the user. If the user already has a valid recipe in the DB, returns it. 
+ * If there is no recipe, or the recipe is too old, get a new recipe with the user preferences and store it in DB.
  *
  * @apiSuccessExample {json} Success-Response:
  *          HTTP/1.1 200 OK
