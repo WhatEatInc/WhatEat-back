@@ -123,9 +123,9 @@ async function get(req, res) {
         let recipeResult;
 
         if(connectedUser.recipe === "" ||
-          (stockedTime.getDate < actualTimeDate.getDate &&
-           stockedTime.getMonth < actualTimeDate.getMonth &&
-           stockedTime.getFullYear < actualTimeDate.getFullYear)){
+          (stockedTime.getDate() < actualTimeDate.getDate() ||
+           stockedTime.getMonth() < actualTimeDate.getMonth() ||
+           stockedTime.getFullYear() < actualTimeDate.getFullYear())){
 
             recipeResult = await getNewRandomRecipe(connectedUser)
 
@@ -225,6 +225,9 @@ async function getNewRandomRecipe(connectedUser){
 
   connectedUser.recipe = JSON.stringify(apiRes)
   connectedUser.recipeDate = Date.now()
+
+  //console.log("recipeController")
+  //console.log(connectedUser.recipeDate)
 
   connectedUser.save()
 

@@ -224,6 +224,31 @@ return connectedUser;
 
 }
 
+
+async function currentUserTest(req) {
+
+  let connectedUser = null;
+
+  try {
+
+  let token = req.body.token;
+
+  const decodedToken = jwt.decode(token, {
+    complete: true,
+  });
+
+  const userId = decodedToken.payload.user_id;
+
+  connectedUser = await User.findById(userId);
+
+} catch (err) {
+  console.log("error")
+}
+
+return connectedUser;
+  
+
+}
 module.exports = {
   register,
   getPreferences,
@@ -231,5 +256,6 @@ module.exports = {
   login,
   logout,
   changePassword,
-  getCurrentUser
+  getCurrentUser,
+  currentUserTest
 };
