@@ -16,12 +16,12 @@ const allergens = {
 };
 
 const particularities = {
-  "Gluten Free": "Gluten Free",
-  Ketogenic: "Ketogenic",
-  Vegan: "Vegan",
-  Vegetarien: "Vegetarien",
-  Pescetarian: "Pescetarian",
-  Paleo: "Paleo",
+  "Gluten Free": "gluten free",
+  Ketogenic: "ketogenic",
+  Vegan: "vegan",
+  Vegetarien: "vegetarien",
+  Pescetarian: "pescetarian",
+  Paleo: "paleo",
 };
 
 const cookTypes = {

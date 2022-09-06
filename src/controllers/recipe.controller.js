@@ -95,7 +95,6 @@ async function getRecipe(userPreferences) {
 // If healthy is not set we can do a one shot query
 
   return new Promise((resolve, reject) => {
-    console.log(intoleranceString)
     return superagent
       .get(complexEndpoint)
       .query({
@@ -144,9 +143,9 @@ async function get(req, res) {
     let actualTimeDate = new Date(Date.now())
 
     if (connectedUser.recipe === "" ||
-      (stockedTime.getDate < actualTimeDate.getDate &&
-        stockedTime.getMonth < actualTimeDate.getMonth &&
-        stockedTime.getFullYear < actualTimeDate.getFullYear)) {
+      (stockedTime.getDate() < actualTimeDate.getDate() ||
+        stockedTime.getMonth() < actualTimeDate.getMonth() ||
+        stockedTime.getFullYear() < actualTimeDate.getFullYear())) {
 
       return reroll(req,res);
 
@@ -157,8 +156,6 @@ async function get(req, res) {
 
     res.status(OK).json(filterRecipe
       (recipeResult)).end();
-     
-
   } catch (err) {
 
     res.json({
@@ -173,27 +170,32 @@ async function get(req, res) {
     Save it in the DB, save the current date in the DB
     send back recipe to frontend */
 async function reroll(req, res) {
-
-
-
   try {
     let connectedUser = await getCurrentUser(req, res);
 
     userPreferences = connectedUser.preferences;
 
-    const apiRes = await getRecipe(userPreferences)
+    let apiRes = await getRecipe(userPreferences)
 
+    if(apiRes === null){
+      while(!apiRes.diets.includes(Array.from(userPreferences.particularities.values()).join(", ").toString())){
+        console.log("tests")
+        apiRes = await getRecipe(userPreferences)
+      }
+    }
+    
     connectedUser.recipe = JSON.stringify(apiRes)
+
     connectedUser.recipeDate = Date.now()
     connectedUser.save()
 
     res.status(OK).json(filterRecipe(apiRes)).end();
     return;
 
-  } catch (error) {
+  } catch (err) {
 
     res.json({
-      status: error,
+      status: err,
     })
 
   }
