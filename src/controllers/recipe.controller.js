@@ -177,10 +177,17 @@ async function reroll(req, res) {
 
     userPreferences = connectedUser.preferences;
 
-    const apiRes = await getRecipe(userPreferences)
+    let apiRes = await getRecipe(userPreferences)
 
-    connectedUser.recipe = JSON.stringify(apiRes)
+    if(apiRes === null){
+      while(!apiRes.diets.includes(Array.from(userPreferences.particularities.values()).join(", ").toString())){
+        console.log("tests")
+        apiRes = await getRecipe(userPreferences)
+      }
+    }
     
+    connectedUser.recipe = JSON.stringify(apiRes)
+
     connectedUser.recipeDate = Date.now()
     connectedUser.save()
 
