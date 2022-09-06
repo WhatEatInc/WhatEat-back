@@ -156,8 +156,6 @@ async function get(req, res) {
 
     res.status(OK).json(filterRecipe
       (recipeResult)).end();
-     
-
   } catch (err) {
 
     res.json({
@@ -194,10 +192,10 @@ async function reroll(req, res) {
     res.status(OK).json(filterRecipe(apiRes)).end();
     return;
 
-  } catch (error) {
+  } catch (err) {
 
     res.json({
-      status: error,
+      status: err,
     })
 
   }
