@@ -21,21 +21,21 @@ const JohnDoe = {
 const prefToSet = {
     "allergens": {
         "Dairy": "Dairy",
-        "Egg": "Egg",
+        "Egg": "Egg"
     },
     "particularities": {
-        "Gluten Free": "Gluten%20Free"
+        "Vegetarien": "vegetarian"
     },
     "cookTypes": {
         "African": "African",
     },
     "healthy": false,
-    "duration": 1,
+    "duration": 1
 }
 
 const prefToTest = {
     "particularities": [
-        "gluten free"
+        "vegetarian"
     ],
     "cookTypes": [
         "African"

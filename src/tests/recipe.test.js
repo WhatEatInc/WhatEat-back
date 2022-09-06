@@ -116,7 +116,6 @@ beforeAll(async () => {
     it('Should replace an empty recipe with a new recipe in the DB and send that recipe back', async () => {
         let test1 = await insertUserInDB(test.JohnDoe)
 
-
         const res1 = await request(app)
             .post('/v0/user/login')
             .send({
@@ -225,8 +224,11 @@ beforeAll(async () => {
         let newCurrentUser = await user.currentUserTest(res1)
         let newRecipe = JSON.parse(newCurrentUser.recipe)
 
+        let tmp = newRecipe.diets.join(' ')
+        let tmp2 = prefToTest.particularities.join(' ').replace(/\s/g, '')
+
         expect(res2.statusCode).toEqual(httpStatus.OK)
-        expect(newRecipe.diets).toEqual(expect.arrayContaining(prefToTest.particularities));
+        expect(tmp).toContain(tmp2);
         expect(newRecipe.cuisines).toEqual(expect.arrayContaining(prefToTest.cookTypes));
         expect(newRecipe.healthy).toEqual(expect.arrayContaining.healthy)
     })
