@@ -179,7 +179,6 @@ async function reroll(req, res) {
 
     if(apiRes === null){
       while(!apiRes.diets.includes(Array.from(userPreferences.particularities.values()).join(", ").toString())){
-        console.log("tests")
         apiRes = await getRecipe(userPreferences)
       }
     }
