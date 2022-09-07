@@ -262,6 +262,32 @@ beforeAll(async () => {
         expect(recipe2).not.toEqual("")
     })
 
+    it('Should send a completed recipe', async () => {
+        let test1 = await insertUserInDB(test.JohnDoe)
+
+        const res1 = await request(app)
+        .post('/v0/user/login')
+        .send({
+            email:    test.JohnDoe.email,
+            password: test.JohnDoe.password
+        })
+
+        const res = await request(app)
+            .get('/v0/recipe/reroll')
+            .set('Authorization', 'bearer ' + res1.body.token)
+            .send()
+            
+        let recipe = res.body
+
+        expect(res.statusCode).toEqual(httpStatus.OK)
+        expect(recipe.title).toEqual(expect.anything())
+        expect(recipe.summary).toEqual(expect.anything())
+        expect(recipe.image).toEqual(expect.anything())
+        expect(recipe.steps).toEqual(expect.anything())
+        expect(recipe.servings).toEqual(expect.anything())
+        expect(recipe.ingredients).toEqual(expect.anything())
+    })
+
     it('should replace the recipe', async () => {
 
         let test1 = await insertUserInDB(test.JohnDoe)
