@@ -105,6 +105,7 @@ async function getRecipe(userPreferences) {
         cuisine: cuisineString,
         diet: dietString,
         number: "1",
+        fillIngredients: "true",
         addRecipeInformation: "true",
         maxReadyTime: maxTime,
       })
