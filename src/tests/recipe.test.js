@@ -127,6 +127,7 @@ beforeAll(async () => {
 
         let recipe1 = currentUser.recipe
 
+
         const res = await request(app)
             .get('/v0/recipe/get')
             .set('Authorization', 'bearer ' + res1.body.token)
@@ -225,7 +226,7 @@ beforeAll(async () => {
         let newRecipe = JSON.parse(newCurrentUser.recipe)
 
         let tmp = newRecipe.diets.join(' ')
-        let tmp2 = prefToTest.particularities.join(' ').replace(/\s/g, '')
+        let tmp2 = prefToTest.particularities.join(' ')
 
         expect(res2.statusCode).toEqual(httpStatus.OK)
         expect(tmp).toContain(tmp2);
