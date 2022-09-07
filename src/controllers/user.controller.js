@@ -1,6 +1,4 @@
-const { Example } = require("../models/example.model");
 const { User } = require("../models/user.model");
-const { Spoonacular } = require("../config/spoonacular.config");
 const { jwt_token_secret } = require("../config/auth.config");
 const { validationResult } = require("express-validator");
 const {
@@ -11,9 +9,6 @@ const {
 } = require("http-status");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { userExample } = require("../config/user.example.config");
-const { NOT_EXTENDED } = require("http-status");
-const { verifyToken } = require("./auth.controller");
 const { Preference } = require("../models/preference.model");
 
 async function register(req, res) {
@@ -28,10 +23,12 @@ async function register(req, res) {
   try {
     // Get user input
     const { firstname, lastname, email, password } = req.body;
+    
+    const emailLower = email.toLowerCase()
 
     // check if user already exist
     // Validate if user exist in our database
-    const oldUser = await User.findOne({ email });
+    const oldUser = await User.findOne({ email: emailLower });
 
     if (oldUser) {
        res
@@ -48,7 +45,7 @@ async function register(req, res) {
     const user = await User.create({
       firstname: firstname,
       lastname: lastname,
-      email: email.toLowerCase(),
+      email: emailLower,
       password: encryptedPassword,
       preferences: new Preference(),
       recipeDate: 0,
@@ -56,7 +53,7 @@ async function register(req, res) {
     });
 
     // Create token
-    const token =  jwt.sign({ user_id: user._id, email }, jwt_token_secret, {
+    const token =  jwt.sign({ user_id: user._id, email: emailLower }, jwt_token_secret, {
       expiresIn: "2h",
     });
 
@@ -83,13 +80,14 @@ async function login(req, res) {
   try {
     // Get user input
     const { email, password } = req.body;
+    let emailLower = email.toLowerCase()
 
     // Validate if user exist in our database
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: emailLower });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
-      const token = jwt.sign({ user_id: user._id, email }, jwt_token_secret, {
+      const token = jwt.sign({ user_id: user._id, email: emailLower }, jwt_token_secret, {
         expiresIn: "2h",
       });
 
@@ -101,13 +99,17 @@ async function login(req, res) {
       .end();
       return;
     }
+
     res
       .status(BAD_REQUEST)
       .json({ error: "Invalid Credentials" }).end();
       return;
 
   } catch (err) {
-    console.log(err);
+    res
+      .status(BAD_REQUEST)
+      .json({ error: err}).end();
+      return;
   }
 }
 
@@ -118,6 +120,7 @@ async function logout(req, res) {
 
 async function getPreferences(req, res) {
  
+  try{
   const connectedUser =  await getCurrentUser(req,res);
 
   res
@@ -128,6 +131,15 @@ async function getPreferences(req, res) {
     })
     .status(OK)
     .end();
+  } catch (err){
+
+    res
+    .status(BAD_REQUEST)
+    .json({ error: err})
+    .end();
+    return
+
+  }
 }
 
 async function setPreferences(req, res) {
@@ -139,6 +151,7 @@ async function setPreferences(req, res) {
     return;
   }
 
+  try{
   let connectedUser =  await getCurrentUser(req,res);
  
 
@@ -155,6 +168,16 @@ async function setPreferences(req, res) {
   await connectedUser.save();
 
   res.status(OK).end();
+
+} catch (err){
+
+ res
+      .status(BAD_REQUEST)
+      .json({ error: err})
+      .end();
+      return
+
+}
 }
 
 async function changePassword(req, res) {
@@ -172,7 +195,7 @@ async function changePassword(req, res) {
 
     const { currentPWD, newPWD } = req.body;
 
-    if (await bcrypt.compare(currentPWD, connectedUser.password)) {
+    if (bcrypt.compare(currentPWD, connectedUser.password)) {
       encryptedPassword = await bcrypt.hash(newPWD, 10);
 
       connectedUser.password = encryptedPassword;
@@ -191,10 +214,15 @@ async function changePassword(req, res) {
 
     
   } catch (err) {
-    console.log(err);
+    res
+    .status(BAD_REQUEST)
+    .json({ error: err})
+    .end();
+    return
   }
 }
 
+/** returns the user currently connected (based on JWT presence) */
 async function getCurrentUser(req, res) {
 
   let connectedUser = null;
@@ -213,20 +241,41 @@ async function getCurrentUser(req, res) {
 
   connectedUser = await User.findById(userId);
 
-} catch (err) {
-  res
-    .status(BAD_REQUEST)
-    .json({
-      error: "Can't find which user is connected ! "
-    }).end();
+  return connectedUser;
 
+} catch (err) {
+  throw "Can't find which user is connected ! ";
 }
 
-return connectedUser;
+
   
 
 }
 
+
+async function currentUserTest(req) {
+
+  let connectedUser = null;
+
+  try {
+
+  let token = req.body.token;
+
+  const decodedToken = jwt.decode(token, {
+    complete: true,
+  });
+
+  const userId = decodedToken.payload.user_id;
+
+  connectedUser = await User.findById(userId);
+
+} catch (err) {
+  console.log("error")
+}
+
+return connectedUser;
+
+}
 module.exports = {
   register,
   getPreferences,
@@ -234,5 +283,6 @@ module.exports = {
   login,
   logout,
   changePassword,
-  getCurrentUser
+  getCurrentUser,
+  currentUserTest
 };
