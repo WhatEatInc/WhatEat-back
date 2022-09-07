@@ -39,8 +39,7 @@ const prefToTest = {
     ],
     "cookTypes": [
         "African"
-    ],
-    "healthy": false
+    ]
 }
 
 const allAllergens = {

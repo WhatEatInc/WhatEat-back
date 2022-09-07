@@ -231,7 +231,6 @@ beforeAll(async () => {
         expect(res2.statusCode).toEqual(httpStatus.OK)
         expect(tmp).toContain(tmp2);
         expect(newRecipe.cuisines).toEqual(expect.arrayContaining(prefToTest.cookTypes));
-        expect(newRecipe.healthy).toEqual(expect.arrayContaining.healthy)
     })
 
   });
