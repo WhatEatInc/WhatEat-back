@@ -23,10 +23,12 @@ async function register(req, res) {
   try {
     // Get user input
     const { firstname, lastname, email, password } = req.body;
+    
+    const emailLower = email.toLowerCase()
 
     // check if user already exist
     // Validate if user exist in our database
-    const oldUser = await User.findOne({ email });
+    const oldUser = await User.findOne({ email: emailLower });
 
     if (oldUser) {
        res
@@ -43,7 +45,7 @@ async function register(req, res) {
     const user = await User.create({
       firstname: firstname,
       lastname: lastname,
-      email: email.toLowerCase(),
+      email: emailLower,
       password: encryptedPassword,
       preferences: new Preference(),
       recipeDate: 0,
@@ -51,7 +53,7 @@ async function register(req, res) {
     });
 
     // Create token
-    const token =  jwt.sign({ user_id: user._id, email }, jwt_token_secret, {
+    const token =  jwt.sign({ user_id: user._id, email: emailLower }, jwt_token_secret, {
       expiresIn: "2h",
     });
 
@@ -78,13 +80,14 @@ async function login(req, res) {
   try {
     // Get user input
     const { email, password } = req.body;
+    let emailLower = email.toLowerCase()
 
     // Validate if user exist in our database
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: emailLower });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
-      const token = jwt.sign({ user_id: user._id, email }, jwt_token_secret, {
+      const token = jwt.sign({ user_id: user._id, email: emailLower }, jwt_token_secret, {
         expiresIn: "2h",
       });
 
@@ -249,6 +252,30 @@ async function getCurrentUser(req, res) {
 
 }
 
+
+async function currentUserTest(req) {
+
+  let connectedUser = null;
+
+  try {
+
+  let token = req.body.token;
+
+  const decodedToken = jwt.decode(token, {
+    complete: true,
+  });
+
+  const userId = decodedToken.payload.user_id;
+
+  connectedUser = await User.findById(userId);
+
+} catch (err) {
+  console.log("error")
+}
+
+return connectedUser;
+
+}
 module.exports = {
   register,
   getPreferences,
@@ -256,5 +283,6 @@ module.exports = {
   login,
   logout,
   changePassword,
-  getCurrentUser
+  getCurrentUser,
+  currentUserTest
 };
