@@ -27,9 +27,9 @@ const prefToSet = {
         "Vegetarien": "vegetarian"
     },
     "cookTypes": {
-        "American": "American",
+        "African": "African",
     },
-    "healthy": true,
+    "healthy": false,
     "duration": 1
 }
 
@@ -38,7 +38,7 @@ const prefToTest = {
         "vegetarian"
     ],
     "cookTypes": [
-        "American"
+        "African"
     ]
 }
 

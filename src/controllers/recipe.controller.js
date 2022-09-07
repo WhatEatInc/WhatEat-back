@@ -38,7 +38,6 @@ async function getRecipe(userPreferences) {
 
   //Basically there's 2 different behaviour based on the "Healthy" preferences
   if (userPreferences.healthy === true) {
-    
     //If healthy is set, we need to get 100 recipes and then randomly select one ourselves
     //Spoonacular API doesn't provide a way to get a random healthy recipe in one shot.
     let tempRes = new Promise((resolve, reject) => {
